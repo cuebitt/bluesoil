@@ -1,5 +1,6 @@
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import { cloudflare } from "@cloudflare/vite-plugin";
 import path from "path";
 import { defineConfig, lazyPlugins } from "vite-plus";
 
@@ -37,5 +38,5 @@ export default defineConfig({
       },
     ],
   },
-  plugins: lazyPlugins(() => [react(), tailwindcss()]),
+  plugins: lazyPlugins(() => [react(), tailwindcss(), cloudflare()]),
 });
