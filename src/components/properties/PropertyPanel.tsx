@@ -1,5 +1,5 @@
 import { useEditorStore } from "@/store/editor";
-import { ELEMENT_DEFS, type ElementNode } from "@/lib/elements";
+import { ELEMENT_DEFS, findElementById } from "@/lib/elements";
 import { isValidLuaName } from "@/lib/lua-generator";
 import { AttributeField } from "./AttributeField";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -12,7 +12,7 @@ export function PropertyPanel() {
   const updateAttribute = useEditorStore((s) => s.updateAttribute);
   const renameElement = useEditorStore((s) => s.renameElement);
 
-  const element = selectedId ? findElement(elements, selectedId) : null;
+  const element = selectedId ? findElementById(elements, selectedId) : null;
 
   if (!element) {
     return (
@@ -183,15 +183,4 @@ function EventField({
       }
     />
   );
-}
-
-function findElement(elements: ElementNode[], id: string): ElementNode | null {
-  for (const el of elements) {
-    if (el.id === id) return el;
-    if (el.children.length > 0) {
-      const found = findElement(el.children, id);
-      if (found) return found;
-    }
-  }
-  return null;
 }

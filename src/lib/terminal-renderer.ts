@@ -1,5 +1,5 @@
 import type { ElementNode } from "./elements";
-import { CC_PALETTE } from "./palette-colors";
+import { CC_PALETTE, TERMINAL_WIDTH, TERMINAL_HEIGHT, hexToCC } from "./palette-colors";
 
 export const CELL_WIDTH = 6;
 export const CELL_HEIGHT = 9;
@@ -59,9 +59,9 @@ function loadPalette(color: string): HTMLCanvasElement {
 
 export function createGrid(): TerminalGrid {
   const grid: TerminalGrid = [];
-  for (let y = 0; y < 19; y++) {
+  for (let y = 0; y < TERMINAL_HEIGHT; y++) {
     const row: TerminalCell[] = [];
-    for (let x = 0; x < 51; x++) {
+    for (let x = 0; x < TERMINAL_WIDTH; x++) {
       row.push({ char: " ", fg: "0", bg: "f" });
     }
     grid.push(row);
@@ -87,7 +87,7 @@ export function renderToGrid(elements: ElementNode[]): TerminalGrid {
         for (let dx = 0; dx < w; dx++) {
           const gx = x - 1 + dx;
           const gy = y - 1 + dy;
-          if (gy >= 0 && gy < 19 && gx >= 0 && gx < 51) {
+          if (gy >= 0 && gy < TERMINAL_HEIGHT && gx >= 0 && gx < TERMINAL_WIDTH) {
             grid[gy][gx].bg = bgIdx;
           }
         }
@@ -98,7 +98,7 @@ export function renderToGrid(elements: ElementNode[]): TerminalGrid {
     for (let i = 0; i < text.length && i < w; i++) {
       const gx = x - 1 + i;
       const gy = y - 1;
-      if (gy >= 0 && gy < 19 && gx >= 0 && gx < 51) {
+      if (gy >= 0 && gy < TERMINAL_HEIGHT && gx >= 0 && gx < TERMINAL_WIDTH) {
         grid[gy][gx].char = text[i];
         grid[gy][gx].fg = fgIdx;
       }
@@ -116,31 +116,9 @@ export function renderToGrid(elements: ElementNode[]): TerminalGrid {
 }
 
 function resolveColor(val: string | number | boolean): string {
-  if (typeof val === "string" && val.startsWith("#")) return hexToCCIndex(val);
+  if (typeof val === "string" && val.startsWith("#")) return hexToCC(val);
   if (typeof val === "string") return val;
   return "f";
-}
-
-function hexToCCIndex(hex: string): string {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-
-  let best = "f";
-  let bestDist = Infinity;
-  for (const [key, rgb] of Object.entries(CC_PALETTE)) {
-    const match = rgb.match(/rgb\((\d+),(\d+),(\d+)\)/);
-    if (!match) continue;
-    const pr = parseInt(match[1]);
-    const pg = parseInt(match[2]);
-    const pb = parseInt(match[3]);
-    const dist = (r - pr) ** 2 + (g - pg) ** 2 + (b - pb) ** 2;
-    if (dist < bestDist) {
-      bestDist = dist;
-      best = key;
-    }
-  }
-  return best;
 }
 
 export function drawGrid(ctx: CanvasRenderingContext2D, grid: TerminalGrid, scale: number): void {
@@ -149,8 +127,8 @@ export function drawGrid(ctx: CanvasRenderingContext2D, grid: TerminalGrid, scal
   const fontScale = fontImage.width / 256;
   const fontMargin = fontScale;
 
-  for (let y = 0; y < 19; y++) {
-    for (let x = 0; x < 51; x++) {
+  for (let y = 0; y < TERMINAL_HEIGHT; y++) {
+    for (let x = 0; x < TERMINAL_WIDTH; x++) {
       const cell = grid[y][x];
       const cellX = x * CELL_WIDTH * scale + TERMINAL_MARGIN;
       const cellY = y * CELL_HEIGHT * scale + TERMINAL_MARGIN;
@@ -191,7 +169,7 @@ export function pixelToCell(
 ): { x: number; y: number } | null {
   const x = Math.floor((px - TERMINAL_MARGIN) / (CELL_WIDTH * scale));
   const y = Math.floor((py - TERMINAL_MARGIN) / (CELL_HEIGHT * scale));
-  if (x < 0 || x >= 51 || y < 0 || y >= 19) return null;
+  if (x < 0 || x >= TERMINAL_WIDTH || y < 0 || y >= TERMINAL_HEIGHT) return null;
   return { x, y };
 }
 

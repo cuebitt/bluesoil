@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useEditorStore } from "@/store/editor";
+import { TERMINAL_WIDTH, TERMINAL_HEIGHT } from "@/lib/palette-colors";
 import { ExportDialog } from "@/components/export/ExportDialog";
 import { ImportDialog } from "@/components/export/ImportDialog";
 import { Palette, FilePlus } from "lucide-react";
@@ -14,7 +15,9 @@ export function AppHeader() {
         <h1 className="text-lg font-semibold">BlueSand</h1>
       </div>
       <div className="flex items-center gap-2">
-        <span className="text-sm text-muted-foreground">51 x 19</span>
+        <span className="text-sm text-muted-foreground">
+          {TERMINAL_WIDTH} x {TERMINAL_HEIGHT}
+        </span>
         <ImportDialog />
         <ExportDialog />
         <Button variant="outline" size="sm" onClick={newProject}>

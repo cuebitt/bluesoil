@@ -10,7 +10,7 @@ import {
   CELL_HEIGHT,
 } from "@/lib/terminal-renderer";
 import { TERMINAL_WIDTH, TERMINAL_HEIGHT } from "@/lib/palette-colors";
-import type { ElementNode } from "@/lib/elements";
+import { findElementById } from "@/lib/elements";
 import fontUrl from "../../assets/font.png";
 
 export function TerminalCanvas() {
@@ -53,7 +53,7 @@ export function TerminalCanvas() {
     drawGrid(ctx, grid, scale);
 
     if (selectedId) {
-      const el = findElement(elements, selectedId);
+      const el = findElementById(elements, selectedId);
       if (el) {
         const ex = ((el.attributes.x as number) || 1) - 1;
         const ey = ((el.attributes.y as number) || 1) - 1;
@@ -155,15 +155,4 @@ export function TerminalCanvas() {
       )}
     </div>
   );
-}
-
-function findElement(elements: ElementNode[], id: string): ElementNode | null {
-  for (const el of elements) {
-    if (el.id === id) return el;
-    if (el.children.length > 0) {
-      const found = findElement(el.children, id);
-      if (found) return found;
-    }
-  }
-  return null;
 }

@@ -1,10 +1,10 @@
-import { CC_PALETTE } from "@/lib/palette-colors";
+import { CC_PALETTE, ccToHex } from "@/lib/palette-colors";
 import { cn } from "@/lib/utils";
 
-const COLOR_ENTRIES = Object.entries(CC_PALETTE);
+const COLOR_ENTRIES = Object.keys(CC_PALETTE);
 
 interface ColorPickerProps {
-  value: string | boolean;
+  value: string;
   onChange: (hex: string) => void;
 }
 
@@ -18,11 +18,8 @@ export function ColorPicker({ value, onChange }: ColorPickerProps) {
         <span className="text-xs text-muted-foreground">{currentHex}</span>
       </div>
       <div className="grid grid-cols-4 gap-1">
-        {COLOR_ENTRIES.map(([idx, rgb]) => {
-          const match = rgb.match(/rgb\((\d+),(\d+),(\d+)\)/);
-          const hex = match
-            ? `#${parseInt(match[1]).toString(16).padStart(2, "0")}${parseInt(match[2]).toString(16).padStart(2, "0")}${parseInt(match[3]).toString(16).padStart(2, "0")}`
-            : "#000000";
+        {COLOR_ENTRIES.map((idx) => {
+          const hex = ccToHex(idx);
           return (
             <button
               key={idx}

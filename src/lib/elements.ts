@@ -7,7 +7,7 @@ import {
   AlignLeft,
   List,
   ChevronDown,
-  TextCursorInput as ComboboxIcon,
+  ChevronsUpDown,
   CheckSquare,
   ToggleLeft,
   SlidersHorizontal,
@@ -147,7 +147,7 @@ export const ELEMENT_DEFS: Record<ElementType, ElementMeta> = {
   },
   comboBox: {
     label: "ComboBox",
-    icon: ComboboxIcon,
+    icon: ChevronsUpDown,
     isContainer: false,
     defaultProps: { x: 1, y: 1, width: 15, text: "" },
     fieldGroups: ["position", "size", "appearance", "content", "events"],
@@ -288,4 +288,13 @@ export function createElementNode(type: ElementType): ElementNode {
     attributes: { ...ELEMENT_DEFS[type].defaultProps },
     children: [],
   };
+}
+
+export function findElementById(elements: ElementNode[], id: string): ElementNode | null {
+  for (const el of elements) {
+    if (el.id === id) return el;
+    const found = findElementById(el.children, id);
+    if (found) return found;
+  }
+  return null;
 }

@@ -25,7 +25,7 @@ Build for production:
 - Tailwind CSS v4
 - shadcn/ui
 - Zustand
-- @iconify/react
+- lucide-react
 
 ## Basalt
 
