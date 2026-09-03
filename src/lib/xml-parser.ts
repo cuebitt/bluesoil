@@ -30,11 +30,11 @@ const TAG_MAP: Record<string, ElementType> = {
   barchart: "barChart",
   linechart: "lineChart",
   tree: "tree",
-  display: "display",
+  canvas: "canvas",
+  pixelgraph: "pixelGraph",
   bigfont: "bigFont",
   program: "program",
   container: "container",
-  sidenav: "sideNav",
 };
 
 interface XmlNode {

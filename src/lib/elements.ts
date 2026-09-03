@@ -28,7 +28,8 @@ import {
   Type,
   SquareTerminal,
   Box,
-  PanelLeft,
+  Brush,
+  Grid2x2,
 } from "lucide-react";
 
 export type ElementType =
@@ -58,11 +59,11 @@ export type ElementType =
   | "barChart"
   | "lineChart"
   | "tree"
-  | "display"
+  | "canvas"
+  | "pixelGraph"
   | "bigFont"
   | "program"
-  | "container"
-  | "sideNav";
+  | "container";
 
 export type AttrFieldType = "text" | "number" | "boolean" | "color" | "select";
 
@@ -462,13 +463,26 @@ export const ELEMENT_DEFS: Record<ElementType, ElementMeta> = {
     ],
     eventAttrs: [],
   },
-  display: {
-    label: "Display",
-    icon: Monitor,
+  canvas: {
+    label: "Canvas",
+    icon: Brush,
     isContainer: false,
     defaultProps: { x: 1, y: 1, width: 20, height: 10 },
     fieldGroups: ["position", "size", "appearance"],
     optionalAttrs: [],
+    eventAttrs: [],
+  },
+  pixelGraph: {
+    label: "PixelGraph",
+    icon: Grid2x2,
+    isContainer: false,
+    defaultProps: { x: 1, y: 1, width: 20, height: 8 },
+    fieldGroups: ["position", "size", "appearance", "behavior"],
+    optionalAttrs: [
+      { key: "minValue", label: "Min Value", type: "number" },
+      { key: "maxValue", label: "Max Value", type: "number" },
+      { key: "series", label: "Series", type: "text", editor: "json" },
+    ],
     eventAttrs: [],
   },
   bigFont: {
@@ -498,25 +512,6 @@ export const ELEMENT_DEFS: Record<ElementType, ElementMeta> = {
     optionalAttrs: [
       { key: "offsetX", label: "Offset X", type: "number" },
       { key: "offsetY", label: "Offset Y", type: "number" },
-    ],
-    eventAttrs: [],
-  },
-  sideNav: {
-    label: "SideNav",
-    icon: PanelLeft,
-    isContainer: true,
-    defaultProps: { x: 1, y: 1, width: 30, height: 15 },
-    fieldGroups: ["position", "size", "appearance", "behavior"],
-    optionalAttrs: [
-      { key: "active", label: "Active", type: "number" },
-      { key: "sidebarWidth", label: "Sidebar Width", type: "number" },
-      {
-        key: "sidebarPosition",
-        label: "Sidebar Position",
-        type: "select",
-        options: ["left", "right"],
-      },
-      { key: "tabs", label: "Tabs", type: "text", editor: "json" },
     ],
     eventAttrs: [],
   },

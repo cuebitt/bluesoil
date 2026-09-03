@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 const ELEMENT_GROUPS: Array<{ label: string; types: ElementType[] }> = [
   {
     label: "Containers",
-    types: ["frame", "container", "row", "column", "flex", "tabControl", "sideNav"],
+    types: ["frame", "container", "row", "column", "flex", "tabControl"],
   },
   { label: "Overlays", types: ["dialog", "menu", "contextMenu", "toast"] },
   { label: "Basic", types: ["label", "button", "input", "textBox", "checkbox", "switch"] },
@@ -22,7 +22,8 @@ const ELEMENT_GROUPS: Array<{ label: string; types: ElementType[] }> = [
       "graph",
       "barChart",
       "lineChart",
-      "display",
+      "pixelGraph",
+      "canvas",
       "bigFont",
       "program",
     ],

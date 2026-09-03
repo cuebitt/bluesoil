@@ -99,8 +99,8 @@ export function renderToGrid(elements: ElementNode[], w: number, h: number): Ter
       case "tree":
         label = text || "Tree";
         break;
-      case "display":
-        label = text || "Display";
+      case "canvas":
+        label = text || "Canvas";
         break;
       case "bigFont":
         label = text || "Big";
@@ -111,8 +111,8 @@ export function renderToGrid(elements: ElementNode[], w: number, h: number): Ter
       case "container":
         label = text || "Container";
         break;
-      case "sideNav":
-        label = text || "SideNav";
+      case "pixelGraph":
+        label = text || "Pixel";
         break;
       default:
         break;

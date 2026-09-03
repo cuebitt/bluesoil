@@ -6,7 +6,7 @@ import {
   type ElementNode,
   type ElementType,
 } from "./elements";
-import { parseBasaltXml } from "./xml-parser";
+import { parseBasaltXml, parseBasaltXmlWithWarnings } from "./xml-parser";
 import { generateXml } from "./xml-generator";
 
 function node(
@@ -105,5 +105,37 @@ describe("visual-builder new elements", () => {
     const xml = generateXml([node]);
     expect(xml).toContain("&quot;");
     expect(xml).not.toContain('[{"');
+  });
+
+  test("legacy display/sideNav defs are gone (not in Basalt 2.5)", () => {
+    expect("display" in ELEMENT_DEFS).toBe(false);
+    expect("sideNav" in ELEMENT_DEFS).toBe(false);
+  });
+
+  test("canvas is a non-container with position/size/appearance only", () => {
+    const meta = ELEMENT_DEFS.canvas;
+    expect(meta.isContainer).toBe(false);
+    expect(meta.fieldGroups).toEqual(["position", "size", "appearance"]);
+    expect(meta.optionalAttrs).toEqual([]);
+  });
+
+  test("pixelGraph exposes min/max value range", () => {
+    const keys = ELEMENT_DEFS.pixelGraph.optionalAttrs.map((a) => a.key);
+    expect(keys).toContain("minValue");
+    expect(keys).toContain("maxValue");
+  });
+
+  test.runIf(typeof DOMParser !== "undefined")("PixelGraph parses with numeric min/max", () => {
+    const elements = parseBasaltXml('<PixelGraph x="2" minValue="0" maxValue="100"/>');
+    expect(elements).toHaveLength(1);
+    expect(elements[0].type).toBe("pixelGraph");
+    expect(elements[0].attributes.minValue).toBe(0);
+    expect(elements[0].attributes.maxValue).toBe(100);
+  });
+
+  test.runIf(typeof DOMParser !== "undefined")("legacy tags warn and skip", () => {
+    const result = parseBasaltXmlWithWarnings('<Display x="1"/><SideNav x="1"/>');
+    expect(result.elements).toHaveLength(0);
+    expect(result.warnings).toHaveLength(2);
   });
 });
