@@ -46,6 +46,7 @@ function loadPalette(color: string): HTMLCanvasElement {
   if (paletteCache[color]) return paletteCache[color];
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d")!;
+  ctx.imageSmoothingEnabled = false;
   canvas.width = fontImage!.width;
   canvas.height = fontImage!.height;
   ctx.globalCompositeOperation = "destination-atop";

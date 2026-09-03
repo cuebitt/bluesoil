@@ -333,7 +333,7 @@ export function TerminalCanvas() {
           onMouseMove={handleMouseMove}
           onMouseUp={endDrag}
           onContextMenu={handleContextMenu}
-          style={{ visibility: fontReady ? "visible" : "hidden" }}
+          style={{ visibility: fontReady ? "visible" : "hidden", imageRendering: "pixelated" }}
         />
       )}
       {menu && (
