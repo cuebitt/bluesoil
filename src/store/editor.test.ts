@@ -53,4 +53,13 @@ describe("history", () => {
     useEditorStore.getState().moveElementUp(useEditorStore.getState().elements[1].id);
     expect(useEditorStore.getState().elements[0].type).toBe("button");
   });
+
+  test("rename is covered by undo", () => {
+    const s = useEditorStore.getState();
+    const id = s.addElement("button", null, 0);
+    useEditorStore.getState().renameElement(id, "saveBtn");
+    expect(useEditorStore.getState().elements[0].name).toBe("saveBtn");
+    useEditorStore.getState().undo();
+    expect(useEditorStore.getState().elements[0].name).toBe("");
+  });
 });

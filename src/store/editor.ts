@@ -228,7 +228,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     commit(set, get, (state) => ({ elements: updateElementAttr(state.elements, id, key, value) })),
 
   renameElement: (id, name) =>
-    set((state) => ({ elements: updateElementName(state.elements, id, name) })),
+    commit(set, get, (state) => ({ elements: updateElementName(state.elements, id, name) })),
 
   select: (id) => set({ selectedId: id }),
   setActiveTool: (type) => set({ activeTool: type, selectedId: null }),
