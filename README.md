@@ -1,32 +1,38 @@
-# React + TypeScript + Vite
+# BlueSand
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A visual builder for Basalt 2.5 XML interfaces. Design UI layouts for CC:Tweaked
+computers and monitors, preview them on an accurate terminal renderer, and export
+ready-to-run XML and Lua files.
 
-Currently, two official plugins are available:
+## Getting Started
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Install dependencies:
 
-## React Compiler
+    pnpm install
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Run the dev server:
 
-## Expanding the Oxlint configuration
+    vp dev
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+Build for production:
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
+    vp build
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Tech Stack
+
+- React 19 + TypeScript
+- Vite (Vite+)
+- Tailwind CSS v4
+- shadcn/ui
+- Zustand
+- @iconify/react
+
+## Basalt
+
+This tool generates markup for [Basalt 2.5](https://basalt.madefor.cc/2.5/), a UI
+framework for CC:Tweaked. See the [Basalt documentation](https://basalt.madefor.cc/2.5/api/)
+for details on elements, properties, and events.
+
+## License
+
+MIT
