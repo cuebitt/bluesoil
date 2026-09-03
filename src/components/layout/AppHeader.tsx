@@ -4,7 +4,7 @@ import { TERMINAL_PRESETS, MIN_TERMINAL, MAX_TERMINAL_W, MAX_TERMINAL_H } from "
 import { ExportDialog } from "@/components/export/ExportDialog";
 import { ImportDialog } from "@/components/export/ImportDialog";
 import { ThemeControls } from "@/components/layout/ThemeControls";
-import { Palette, FilePlus } from "lucide-react";
+import { Palette, FilePlus, Trash2 } from "lucide-react";
 
 export function AppHeader() {
   const newProject = useEditorStore((s) => s.newProject);
@@ -62,6 +62,16 @@ export function AppHeader() {
         <Button variant="outline" size="sm" onClick={newProject}>
           <FilePlus data-icon="inline-start" />
           New
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            if (confirm("Clear the canvas? This cannot be undone.")) newProject();
+          }}
+        >
+          <Trash2 data-icon="inline-start" />
+          Clear
         </Button>
         <ThemeControls />
       </div>
