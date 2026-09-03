@@ -36,6 +36,10 @@ export function parseProjectJson(raw: string): ParseResult {
   } catch {
     throw new Error("Invalid project file: malformed JSON");
   }
+  return parseProjectObject(obj);
+}
+
+export function parseProjectObject(obj: unknown): ParseResult {
   if (typeof obj !== "object" || obj === null || Array.isArray(obj)) {
     throw new Error("Invalid project file: expected object with elements array");
   }

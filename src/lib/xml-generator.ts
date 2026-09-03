@@ -52,31 +52,15 @@ function attributesToXml(el: ElementNode): string {
     "onScroll",
     "visible",
     "z",
-    "focusedBackground",
-    "focusedForeground",
-    "editable",
     "checked",
-    "checkedText",
-    "selectedBackground",
-    "selectedForeground",
-    "selectedText",
-    "dropSymbol",
     "step",
     "max",
     "horizontal",
     "progress",
     "showPercentage",
     "direction",
-    "progressColor",
-    "headerColor",
     "selectedColor",
     "gridColor",
-    "activeTab",
-    "tabHeight",
-    "flexDirection",
-    "flexSpacing",
-    "flexJustifyContent",
-    "flexWrap",
     "separatorColor",
     "checkedSymbol",
     "uncheckedSymbol",
@@ -91,7 +75,6 @@ function attributesToXml(el: ElementNode): string {
     "active",
     "activeBackground",
     "activeForeground",
-    "direction",
     "gap",
     "padding",
     "align",
@@ -125,11 +108,15 @@ function attributesToXml(el: ElementNode): string {
   return parts.length > 0 ? " " + parts.join(" ") : "";
 }
 
+function escapeXml(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+}
+
 function formatAttrValue(value: string | number | boolean | object): string {
-  if (typeof value === "object" && value !== null) return JSON.stringify(value);
+  if (typeof value === "object" && value !== null) return escapeXml(JSON.stringify(value));
   if (typeof value === "boolean") return value ? "true" : "false";
   if (typeof value === "number") return String(value);
   // Entity-escaping is safe for reactive {expr} values too: the XML
   // parser decodes entities before Basalt evaluates the expression.
-  return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+  return escapeXml(String(value));
 }

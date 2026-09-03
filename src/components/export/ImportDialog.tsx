@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useEditorStore } from "@/store/editor";
 import { parseBasaltXmlWithWarnings } from "@/lib/xml-parser";
-import { parseProjectJson } from "@/lib/project-json";
+import { parseProjectObject } from "@/lib/project-json";
 import { Upload } from "lucide-react";
 
 export function ImportDialog() {
@@ -32,7 +32,7 @@ export function ImportDialog() {
         Array.isArray((obj as { elements?: unknown }).elements)
       ) {
         try {
-          const parsed = parseProjectJson(xml);
+          const parsed = parseProjectObject(obj);
           setElements(parsed.elements);
           setTerminalSize(parsed.terminalWidth, parsed.terminalHeight);
           setWarnings(parsed.warnings);

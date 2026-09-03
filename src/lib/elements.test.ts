@@ -86,9 +86,11 @@ describe("visual-builder new elements", () => {
     expect(elements[0].attributes.x).toBe(2);
   });
 
-  test("tree nodes export as JSON string", () => {
+  test("tree nodes export escaped without raw quotes", () => {
     const node = createElementNode("tree");
     node.attributes.nodes = [{ label: "a" }];
-    expect(generateXml([node])).toContain(JSON.stringify([{ label: "a" }]));
+    const xml = generateXml([node]);
+    expect(xml).toContain("&quot;");
+    expect(xml).not.toContain('[{"');
   });
 });
