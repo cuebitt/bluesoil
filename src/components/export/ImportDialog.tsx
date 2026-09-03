@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useEditorStore } from "@/store/editor";
 import { parseBasaltXmlWithWarnings } from "@/lib/xml-parser";
+import { parseProjectJson } from "@/lib/project-json";
 import { Upload } from "lucide-react";
 
 export function ImportDialog() {
@@ -18,10 +19,37 @@ export function ImportDialog() {
   const [warnings, setWarnings] = useState<string[]>([]);
   const [open, setOpen] = useState(false);
   const setElements = useEditorStore((s) => s.setElements);
+  const setTerminalSize = useEditorStore((s) => s.setTerminalSize);
   const elements = useEditorStore((s) => s.elements);
 
   const handleImport = () => {
     if (elements.length > 0 && !confirm("This will replace the current project. Continue?")) return;
+    try {
+      const obj = JSON.parse(xml);
+      if (
+        typeof obj === "object" &&
+        obj !== null &&
+        Array.isArray((obj as { elements?: unknown }).elements)
+      ) {
+        try {
+          const parsed = parseProjectJson(xml);
+          setElements(parsed.elements);
+          setTerminalSize(parsed.terminalWidth, parsed.terminalHeight);
+          setWarnings(parsed.warnings);
+          setError(null);
+          if (parsed.warnings.length === 0) {
+            setOpen(false);
+            setXml("");
+          }
+        } catch (err) {
+          setError(err instanceof Error ? err.message : "Failed to parse project.");
+          setWarnings([]);
+        }
+        return;
+      }
+    } catch {
+      /* not JSON, fall through to XML */
+    }
     try {
       const { elements: parsed, warnings: parseWarnings } = parseBasaltXmlWithWarnings(xml);
       setElements(parsed);
@@ -57,7 +85,7 @@ export function ImportDialog() {
       </DialogTrigger>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Import Basalt XML</DialogTitle>
+          <DialogTitle>Import</DialogTitle>
         </DialogHeader>
         <div className="flex flex-col gap-3">
           <Textarea
@@ -89,7 +117,7 @@ export function ImportDialog() {
             <input
               id="xml-file-input"
               type="file"
-              accept=".xml"
+              accept=".xml,.json"
               className="hidden"
               onChange={handleFileUpload}
             />
