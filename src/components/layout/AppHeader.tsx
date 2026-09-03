@@ -3,6 +3,7 @@ import { useEditorStore } from "@/store/editor";
 import { TERMINAL_WIDTH, TERMINAL_HEIGHT } from "@/lib/palette-colors";
 import { ExportDialog } from "@/components/export/ExportDialog";
 import { ImportDialog } from "@/components/export/ImportDialog";
+import { ThemeControls } from "@/components/layout/ThemeControls";
 import { Palette, FilePlus } from "lucide-react";
 
 export function AppHeader() {
@@ -24,6 +25,7 @@ export function AppHeader() {
           <FilePlus data-icon="inline-start" />
           New
         </Button>
+        <ThemeControls />
       </div>
     </header>
   );
