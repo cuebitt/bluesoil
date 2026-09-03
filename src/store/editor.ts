@@ -7,6 +7,8 @@ interface EditorStore {
   selectedId: string | null;
   activeTool: ElementType | null;
   clipboard: ElementNode | null;
+  past: ElementNode[][];
+  future: ElementNode[][];
 
   addElement: (type: ElementType, parentId: string | null, index: number) => string;
   removeElement: (id: string) => void;
@@ -21,6 +23,8 @@ interface EditorStore {
   paste: () => void;
   newProject: () => void;
   setElements: (elements: ElementNode[]) => void;
+  undo: () => void;
+  redo: () => void;
   saveToLocalStorage: () => void;
   loadFromLocalStorage: () => void;
 }
@@ -69,7 +73,15 @@ function removeNode(elements: ElementNode[], id: string): [ElementNode[], Elemen
 
 function swapSibling(elements: ElementNode[], id: string, direction: "up" | "down"): ElementNode[] {
   const result = findNode(elements, id);
-  if (!result || result.parent === null) return elements;
+  if (!result) return elements;
+  if (result.parent === null) {
+    const idx = result.index;
+    const swapIdx = direction === "up" ? idx - 1 : idx + 1;
+    if (swapIdx < 0 || swapIdx >= elements.length) return elements;
+    const next = [...elements];
+    [next[idx], next[swapIdx]] = [next[swapIdx], next[idx]];
+    return next;
+  }
 
   const siblings = result.parent.children;
   const idx = result.index;
@@ -135,15 +147,40 @@ function updateElementName(elements: ElementNode[], id: string, name: string): E
   });
 }
 
+const MAX_HISTORY = 50;
+
+type StoreSet = (
+  partial: Partial<EditorStore> | ((state: EditorStore) => Partial<EditorStore>),
+) => void;
+type StoreGet = () => EditorStore;
+
+function commit(
+  set: StoreSet,
+  get: StoreGet,
+  next: Partial<EditorStore> | ((state: EditorStore) => Partial<EditorStore>),
+): void {
+  const { elements, past } = get();
+  const newPast = [...past, structuredClone(elements)];
+  if (newPast.length > MAX_HISTORY) newPast.shift();
+  if (typeof next === "function") {
+    const fn = next as (state: EditorStore) => Partial<EditorStore>;
+    set((state) => ({ ...fn(state), past: newPast, future: [] }));
+  } else {
+    set({ ...next, past: newPast, future: [] });
+  }
+}
+
 export const useEditorStore = create<EditorStore>((set, get) => ({
   elements: [],
   selectedId: null,
   activeTool: null,
   clipboard: null,
+  past: [],
+  future: [],
 
   addElement: (type, parentId, index) => {
     const node = createElementNode(type);
-    set((state) => {
+    commit(set, get, (state) => {
       if (parentId === null) {
         const elements = [...state.elements];
         elements.splice(index, 0, node);
@@ -159,16 +196,18 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   },
 
   removeElement: (id) =>
-    set((state) => {
+    commit(set, get, (state) => {
       const [elements] = removeNode(state.elements, id);
       return { elements, selectedId: state.selectedId === id ? null : state.selectedId };
     }),
 
-  moveElementUp: (id) => set((state) => ({ elements: swapSibling(state.elements, id, "up") })),
-  moveElementDown: (id) => set((state) => ({ elements: swapSibling(state.elements, id, "down") })),
+  moveElementUp: (id) =>
+    commit(set, get, (state) => ({ elements: swapSibling(state.elements, id, "up") })),
+  moveElementDown: (id) =>
+    commit(set, get, (state) => ({ elements: swapSibling(state.elements, id, "down") })),
 
   duplicateElement: (id) =>
-    set((state) => {
+    commit(set, get, (state) => {
       const result = findNode(state.elements, id);
       if (!result) return state;
       const clone = cloneNode(result.node);
@@ -186,7 +225,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     }),
 
   updateAttribute: (id, key, value) =>
-    set((state) => ({ elements: updateElementAttr(state.elements, id, key, value) })),
+    commit(set, get, (state) => ({ elements: updateElementAttr(state.elements, id, key, value) })),
 
   renameElement: (id, name) =>
     set((state) => ({ elements: updateElementName(state.elements, id, name) })),
@@ -200,15 +239,42 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
       return result ? { clipboard: cloneNode(result.node) } : state;
     }),
 
-  paste: () =>
-    set((state) => {
+  paste: () => {
+    if (!get().clipboard) return;
+    commit(set, get, (state) => {
       if (!state.clipboard) return state;
       const clone = cloneNode(state.clipboard);
       return { elements: [...state.elements, clone], selectedId: clone.id };
-    }),
+    });
+  },
 
-  newProject: () => set({ elements: [], selectedId: null, activeTool: null, clipboard: null }),
-  setElements: (elements) => set({ elements }),
+  newProject: () =>
+    commit(set, get, { elements: [], selectedId: null, activeTool: null, clipboard: null }),
+  setElements: (elements) => commit(set, get, { elements }),
+
+  undo: () => {
+    const { past, future, elements } = get();
+    if (past.length === 0) return;
+    const previous = past[past.length - 1];
+    set({
+      elements: structuredClone(previous),
+      past: past.slice(0, -1),
+      future: [...future, structuredClone(elements)],
+      selectedId: null,
+    });
+  },
+
+  redo: () => {
+    const { past, future, elements } = get();
+    if (future.length === 0) return;
+    const next = future[future.length - 1];
+    set({
+      elements: structuredClone(next),
+      future: future.slice(0, -1),
+      past: [...past, structuredClone(elements)],
+      selectedId: null,
+    });
+  },
 
   saveToLocalStorage: () => {
     const { elements } = get();
