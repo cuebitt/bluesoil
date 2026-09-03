@@ -15,11 +15,11 @@ export function ElementTree() {
   const duplicateElement = useEditorStore((s) => s.duplicateElement);
 
   return (
-    <div className="flex flex-col border-t">
+    <div className="flex min-h-0 flex-1 flex-col border-t">
       <div className="border-b px-3 py-2">
         <h2 className="text-sm font-medium">Tree</h2>
       </div>
-      <ScrollArea className="flex-1">
+      <ScrollArea className="min-h-0 flex-1">
         <div className="p-2">
           {elements.length === 0 ? (
             <p className="p-2 text-xs text-muted-foreground">

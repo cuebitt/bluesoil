@@ -16,7 +16,7 @@ export function PropertyPanel() {
 
   if (!element) {
     return (
-      <div className="flex flex-col border-l">
+      <div className="flex h-full min-h-0 flex-col border-l">
         <div className="border-b px-3 py-2">
           <h2 className="text-sm font-medium">Properties</h2>
         </div>
@@ -31,11 +31,11 @@ export function PropertyPanel() {
   const update = (k: string, v: string | number | boolean) => updateAttribute(element.id, k, v);
 
   return (
-    <div className="flex flex-col border-l">
+    <div className="flex h-full min-h-0 flex-col border-l">
       <div className="border-b px-3 py-2">
         <h2 className="text-sm font-medium">Properties</h2>
       </div>
-      <ScrollArea className="flex-1">
+      <ScrollArea className="min-h-0 flex-1">
         <div className="flex flex-col gap-3 p-3">
           <div className="flex items-center gap-2">
             <Badge variant="outline">{meta.label}</Badge>

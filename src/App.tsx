@@ -31,12 +31,12 @@ function App() {
 
   return (
     <MainLayout>
-      <div className="flex w-64 flex-col">
+      <div className="flex min-h-0 w-64 shrink-0 flex-col">
         <ElementPalette />
         <ElementTree />
       </div>
       <TerminalCanvas />
-      <div className="w-72">
+      <div className="min-h-0 w-72 shrink-0">
         <PropertyPanel />
       </div>
     </MainLayout>
