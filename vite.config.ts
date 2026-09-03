@@ -12,6 +12,7 @@ export default defineConfig({
   },
   fmt: {},
   lint: {
+    ignorePatterns: ["src/components/ui/**"],
     plugins: ["react", "typescript", "oxc"],
     rules: {
       "react/rules-of-hooks": "error",
