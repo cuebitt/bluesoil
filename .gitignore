@@ -34,3 +34,6 @@ dist-ssr
 AGENTS.md
 .agents
 skills-lock.json
+
+# AI planning artifacts
+docs/superpowers/
