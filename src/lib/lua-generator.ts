@@ -1,5 +1,15 @@
 import type { ElementNode } from "./elements";
 
+const LUA_KEYWORDS = new Set([
+  "and", "break", "do", "else", "elseif", "end", "false", "for",
+  "function", "if", "in", "local", "nil", "not", "or", "repeat",
+  "return", "then", "true", "until", "while",
+]);
+
+export function isValidLuaName(name: string): boolean {
+  return /^[A-Za-z_][A-Za-z0-9_]*$/.test(name) && !LUA_KEYWORDS.has(name);
+}
+
 export function generateLua(elements: ElementNode[]): string {
   const handlers = new Set<string>();
   const namedElements: Array<{ name: string; type: string }> = [];

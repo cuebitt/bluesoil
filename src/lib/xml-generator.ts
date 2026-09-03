@@ -34,7 +34,13 @@ function attributesToXml(el: ElementNode): string {
 
   for (const key of attrOrder) {
     if (key in el.attributes && key !== "name") {
-      parts.push(`${key}="${formatAttrValue(el.attributes[key])}"`);
+      const value = el.attributes[key];
+      // Skip empty event handler references: Basalt would look up
+      // a scope function with an empty name and fail at load time.
+      if (key.startsWith("on") && typeof value === "string" && !value.trim()) {
+        continue;
+      }
+      parts.push(`${key}="${formatAttrValue(value)}"`);
     }
   }
 
@@ -50,6 +56,10 @@ function attributesToXml(el: ElementNode): string {
 function formatAttrValue(value: string | number | boolean): string {
   if (typeof value === "boolean") return value ? "true" : "false";
   if (typeof value === "number") return String(value);
-  if (typeof value === "string" && value.startsWith("{") && value.endsWith("}")) return value;
-  return String(value);
+  // Entity-escaping is safe for reactive {expr} values too: the XML
+  // parser decodes entities before Basalt evaluates the expression.
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/"/g, "&quot;");
 }

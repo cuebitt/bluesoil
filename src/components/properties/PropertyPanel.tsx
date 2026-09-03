@@ -1,5 +1,6 @@
 import { useEditorStore } from "@/store/editor";
 import { ELEMENT_DEFS, type ElementNode } from "@/lib/elements";
+import { isValidLuaName } from "@/lib/lua-generator";
 import { AttributeField } from "./AttributeField";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
@@ -43,6 +44,9 @@ export function PropertyPanel() {
           <div className="flex flex-col gap-1">
             <label className="text-sm">Name</label>
             <Input value={element.name} onChange={(e) => renameElement(element.id, e.target.value)} placeholder="element_name" />
+            {element.name && !isValidLuaName(element.name) && (
+              <p className="text-xs text-destructive">Not a valid Lua identifier; the generated scaffold will not run.</p>
+            )}
           </div>
 
           {meta.fieldGroups.includes("position") && (
@@ -85,14 +89,39 @@ export function PropertyPanel() {
 
           {meta.fieldGroups.includes("events") && (
             <>
-              <AttributeField label="onClick" keyName="onClick" value={element.attributes.onClick ?? ""} onChange={update} />
-              <AttributeField label="onChange" keyName="onChange" value={element.attributes.onChange ?? ""} onChange={update} />
-              <AttributeField label="onSelect" keyName="onSelect" value={element.attributes.onSelect ?? ""} onChange={update} />
+              <EventField eventKey="onClick" value={element.attributes.onClick} onChange={update} />
+              <EventField eventKey="onChange" value={element.attributes.onChange} onChange={update} />
+              <EventField eventKey="onSelect" value={element.attributes.onSelect} onChange={update} />
             </>
           )}
         </div>
       </ScrollArea>
     </div>
+  );
+}
+
+function EventField({
+  eventKey,
+  value,
+  onChange,
+}: {
+  eventKey: string;
+  value: string | number | boolean | undefined;
+  onChange: (key: string, value: string | number | boolean) => void;
+}) {
+  const text = typeof value === "string" ? value : "";
+  return (
+    <AttributeField
+      label={eventKey}
+      keyName={eventKey}
+      value={value ?? ""}
+      onChange={onChange}
+      error={
+        text.trim() && !isValidLuaName(text.trim())
+          ? "Not a valid Lua function name; the generated scaffold will not run."
+          : null
+      }
+    />
   );
 }
 

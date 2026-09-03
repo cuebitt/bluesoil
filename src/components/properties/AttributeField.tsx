@@ -8,9 +8,10 @@ interface AttributeFieldProps {
   value: string | number | boolean;
   onChange: (key: string, value: string | number | boolean) => void;
   type?: "text" | "number" | "boolean" | "color";
+  error?: string | null;
 }
 
-export function AttributeField({ label, keyName, value, onChange, type }: AttributeFieldProps) {
+export function AttributeField({ label, keyName, value, onChange, type, error }: AttributeFieldProps) {
   const inferredType = type ?? (typeof value === "boolean" ? "boolean" : typeof value === "number" ? "number" : "text");
 
   if (inferredType === "boolean") {
@@ -42,6 +43,7 @@ export function AttributeField({ label, keyName, value, onChange, type }: Attrib
         }}
         type={inferredType === "number" ? "number" : "text"}
       />
+      {error && <p className="text-xs text-destructive">{error}</p>}
     </div>
   );
 }
