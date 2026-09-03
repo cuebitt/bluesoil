@@ -25,13 +25,17 @@ export function loadFont(fontPath: string): Promise<void> {
   fontImage = new Image();
   fontImage.src = fontPath;
 
-  fontPromise = new Promise<void>((resolve) => {
+  fontPromise = new Promise<void>((resolve, reject) => {
     fontImage!.onload = () => {
       fontLoaded = true;
       for (const key of Object.keys(CC_PALETTE)) {
         loadPalette(CC_PALETTE[key]);
       }
       resolve();
+    };
+    fontImage!.onerror = () => {
+      fontPromise = null;
+      reject(new Error(`Failed to load terminal font: ${fontPath}`));
     };
   });
 
