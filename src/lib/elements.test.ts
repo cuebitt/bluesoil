@@ -75,8 +75,21 @@ describe("widget scalar props", () => {
 });
 
 describe("visual-builder new elements", () => {
-  test("tree def exposes nodeColor", () => {
-    expect(ELEMENT_DEFS.tree.optionalAttrs.some((a) => a.key === "nodeColor")).toBe(true);
+  test("tree exposes canonical selection and scrollbar keys", () => {
+    const keys = ELEMENT_DEFS.tree.optionalAttrs.map((a) => a.key);
+    expect(keys).toContain("selectionBackground");
+    expect(keys).toContain("selectionForeground");
+    expect(keys).toContain("scrollbarColor");
+    expect(keys).toContain("scrollbarThumbColor");
+    expect(keys).toContain("scrollbar");
+    expect(keys).not.toContain("nodeColor");
+    expect(keys).not.toContain("selectedColor");
+  });
+
+  test("program exposes path and not running", () => {
+    const keys = ELEMENT_DEFS.program.optionalAttrs.map((a) => a.key);
+    expect(keys).toContain("path");
+    expect(keys).not.toContain("running");
   });
 
   test.runIf(typeof DOMParser !== "undefined")("Tree parses to tree element with numeric x", () => {

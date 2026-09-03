@@ -59,7 +59,6 @@ function attributesToXml(el: ElementNode): string {
     "progress",
     "showPercentage",
     "direction",
-    "selectedColor",
     "gridColor",
     "separatorColor",
     "checkedSymbol",

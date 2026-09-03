@@ -448,8 +448,16 @@ export const ELEMENT_DEFS: Record<ElementType, ElementMeta> = {
     defaultProps: { x: 1, y: 1, width: 20, height: 10 },
     fieldGroups: ["position", "size", "appearance", "behavior"],
     optionalAttrs: [
-      { key: "nodeColor", label: "Node Color", type: "color" },
-      { key: "selectedColor", label: "Selected Color", type: "color" },
+      { key: "selectionBackground", label: "Selection Background", type: "color" },
+      { key: "selectionForeground", label: "Selection Foreground", type: "color" },
+      { key: "scrollbarColor", label: "Scrollbar Color", type: "color" },
+      { key: "scrollbarThumbColor", label: "Scrollbar Thumb Color", type: "color" },
+      {
+        key: "scrollbar",
+        label: "Scrollbar",
+        type: "select",
+        options: ["auto", "always", "hidden"],
+      },
       { key: "nodes", label: "Nodes", type: "text", editor: "json" },
     ],
     eventAttrs: [],
@@ -478,10 +486,7 @@ export const ELEMENT_DEFS: Record<ElementType, ElementMeta> = {
     isContainer: false,
     defaultProps: { x: 1, y: 1, width: 20, height: 15 },
     fieldGroups: ["position", "size", "appearance", "behavior"],
-    optionalAttrs: [
-      { key: "path", label: "Path", type: "text" },
-      { key: "running", label: "Running", type: "boolean" },
-    ],
+    optionalAttrs: [{ key: "path", label: "Path", type: "text" }],
     eventAttrs: [],
   },
   container: {
