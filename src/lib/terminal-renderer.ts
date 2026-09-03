@@ -179,6 +179,9 @@ export function pixelToCell(px: number, py: number, scale: number): { x: number;
 }
 
 export function hitTest(elements: ElementNode[], cellX: number, cellY: number): ElementNode | null {
+  // pixelToCell returns 0-based cells; element x/y are 1-based.
+  const x1 = cellX + 1;
+  const y1 = cellY + 1;
   for (let i = elements.length - 1; i >= 0; i--) {
     const el = elements[i];
     if (el.children.length > 0) {
@@ -189,7 +192,7 @@ export function hitTest(elements: ElementNode[], cellX: number, cellY: number): 
     const ey = (el.attributes.y as number) || 1;
     const ew = (el.attributes.width as number) || 10;
     const eh = (el.attributes.height as number) || 3;
-    if (cellX >= ex && cellX < ex + ew && cellY >= ey && cellY < ey + eh) {
+    if (x1 >= ex && x1 < ex + ew && y1 >= ey && y1 < ey + eh) {
       return el;
     }
   }
