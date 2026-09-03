@@ -3,7 +3,7 @@ import { useEditorStore } from "@/store/editor";
 import { generateLua } from "@/lib/lua-generator";
 import { Highlight, themes } from "prism-react-renderer";
 import { Button } from "@/components/ui/button";
-import { Icon } from "@iconify/react";
+import { Copy } from "lucide-react";
 
 export function LuaOutput() {
   const elements = useEditorStore((s) => s.elements);
@@ -14,7 +14,7 @@ export function LuaOutput() {
       <div className="flex items-center justify-between border-b px-3 py-1">
         <span className="text-xs font-medium">Lua</span>
         <Button variant="ghost" size="sm" onClick={() => navigator.clipboard.writeText(lua)}>
-          <Icon icon="mdi:content-copy" data-icon="inline-start" />
+          <Copy data-icon="inline-start" />
           Copy
         </Button>
       </div>

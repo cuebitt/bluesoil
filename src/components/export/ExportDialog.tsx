@@ -8,7 +8,7 @@ import { useEditorStore } from "@/store/editor";
 import { generateXml } from "@/lib/xml-generator";
 import { generateLua } from "@/lib/lua-generator";
 import { Highlight, themes } from "prism-react-renderer";
-import { Icon } from "@iconify/react";
+import { Download } from "lucide-react";
 
 export function ExportDialog() {
   const [includeLua, setIncludeLua] = useState(true);
@@ -31,8 +31,8 @@ export function ExportDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={<Button variant="outline" size="sm" />}>
-          <Icon icon="mdi:export" data-icon="inline-start" />
-          Export
+        <Download data-icon="inline-start" />
+        Export
       </DialogTrigger>
       <DialogContent className="max-w-2xl">
         <DialogHeader>

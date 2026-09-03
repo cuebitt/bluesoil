@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useEditorStore } from "@/store/editor";
 import { parseBasaltXml } from "@/lib/xml-parser";
-import { Icon } from "@iconify/react";
+import { Upload } from "lucide-react";
 
 export function ImportDialog() {
   const [xml, setXml] = useState("");
@@ -30,8 +30,8 @@ export function ImportDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={<Button variant="outline" size="sm" />}>
-          <Icon icon="mdi:import" data-icon="inline-start" />
-          Import
+        <Upload data-icon="inline-start" />
+        Import
       </DialogTrigger>
       <DialogContent className="max-w-2xl">
         <DialogHeader>

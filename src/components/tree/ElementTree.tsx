@@ -1,9 +1,9 @@
 import { useEditorStore } from "@/store/editor";
 import { ELEMENT_DEFS, type ElementNode } from "@/lib/elements";
-import { Icon } from "@iconify/react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { ChevronUp, ChevronDown, Copy, Trash2 } from "lucide-react";
 
 export function ElementTree() {
   const elements = useEditorStore((s) => s.elements);
@@ -59,6 +59,7 @@ function TreeNode({
   onDuplicate: (id: string) => void;
 }) {
   const meta = ELEMENT_DEFS[node.type];
+  const Icon = meta.icon;
   const isSelected = node.id === selectedId;
 
   return (
@@ -71,21 +72,21 @@ function TreeNode({
         style={{ paddingLeft: `${depth * 16 + 4}px` }}
         onClick={() => onSelect(node.id)}
       >
-        <Icon icon={meta.icon} className="size-3.5 shrink-0" />
+        <Icon className="size-3.5 shrink-0" />
         <span className="flex-1 truncate">{node.name || meta.label}</span>
         {isSelected && (
           <div className="flex gap-0.5">
             <Button variant="ghost" size="icon" className="size-5" onClick={(e) => { e.stopPropagation(); onMoveUp(node.id); }}>
-              <Icon icon="mdi:chevron-up" className="size-3" />
+              <ChevronUp className="size-3" />
             </Button>
             <Button variant="ghost" size="icon" className="size-5" onClick={(e) => { e.stopPropagation(); onMoveDown(node.id); }}>
-              <Icon icon="mdi:chevron-down" className="size-3" />
+              <ChevronDown className="size-3" />
             </Button>
             <Button variant="ghost" size="icon" className="size-5" onClick={(e) => { e.stopPropagation(); onDuplicate(node.id); }}>
-              <Icon icon="mdi:content-copy" className="size-3" />
+              <Copy className="size-3" />
             </Button>
             <Button variant="ghost" size="icon" className="size-5" onClick={(e) => { e.stopPropagation(); onRemove(node.id); }}>
-              <Icon icon="mdi:delete" className="size-3" />
+              <Trash2 className="size-3" />
             </Button>
           </div>
         )}

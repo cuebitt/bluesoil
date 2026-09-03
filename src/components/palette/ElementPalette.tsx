@@ -1,6 +1,5 @@
 import { useEditorStore } from "@/store/editor";
 import { ELEMENT_DEFS, type ElementType } from "@/lib/elements";
-import { Icon } from "@iconify/react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -26,6 +25,7 @@ export function ElementPalette() {
         <div className="flex flex-col gap-1 p-2">
           {ELEMENT_TYPES.map((type) => {
             const meta = ELEMENT_DEFS[type];
+            const Icon = meta.icon;
             const isActive = activeTool === type;
             return (
               <button
@@ -36,7 +36,7 @@ export function ElementPalette() {
                   isActive ? "bg-primary text-primary-foreground" : "hover:bg-muted",
                 )}
               >
-                <Icon icon={meta.icon} className="size-4 shrink-0" />
+                <Icon className="size-4 shrink-0" />
                 <span className="flex-1 truncate">{meta.label}</span>
                 {meta.isContainer && (
                   <Badge variant="secondary" className="ml-auto text-[10px]">container</Badge>
