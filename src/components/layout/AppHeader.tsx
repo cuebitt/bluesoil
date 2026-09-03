@@ -13,7 +13,7 @@ export function AppHeader() {
     <header className="flex items-center justify-between border-b px-4 py-2">
       <div className="flex items-center gap-2">
         <Palette className="size-6 text-primary" />
-        <h1 className="text-lg font-semibold">BlueSand</h1>
+        <h1 className="text-lg font-semibold">BlueSoil</h1>
       </div>
       <div className="flex items-center gap-2">
         <span className="text-sm text-muted-foreground">

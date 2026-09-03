@@ -6,7 +6,8 @@ export type Accent = "neutral" | "blue" | "green" | "amber" | "red" | "violet";
 
 export const ACCENTS: Accent[] = ["neutral", "blue", "green", "amber", "red", "violet"];
 
-const STORAGE_KEY = "bluesand-theme";
+const STORAGE_KEY = "bluesoil-theme";
+const LEGACY_STORAGE_KEY = "bluesand-theme";
 
 interface ThemeStore {
   mode: ThemeMode;
@@ -40,7 +41,8 @@ function loadInitial(): { mode: ThemeMode; accent: Accent } {
   const fallback: { mode: ThemeMode; accent: Accent } = { mode: "system", accent: "neutral" };
   if (typeof window === "undefined") return fallback;
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
+    const raw =
+      window.localStorage.getItem(STORAGE_KEY) ?? window.localStorage.getItem(LEGACY_STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw) as { mode?: unknown; accent?: unknown };
       return {
@@ -68,6 +70,7 @@ function applyTheme(mode: ThemeMode, accent: Accent, systemDark: boolean) {
 function persist(mode: ThemeMode, accent: Accent) {
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ mode, accent }));
+    window.localStorage.removeItem(LEGACY_STORAGE_KEY);
   } catch {
     /* ignore */
   }

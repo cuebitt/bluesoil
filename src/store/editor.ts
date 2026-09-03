@@ -212,12 +212,13 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
 
   saveToLocalStorage: () => {
     const { elements } = get();
-    localStorage.setItem("bluesand-project", JSON.stringify({ elements, version: 1 }));
+    localStorage.setItem("bluesoil-project", JSON.stringify({ elements, version: 1 }));
   },
 
   loadFromLocalStorage: () => {
     try {
-      const raw = localStorage.getItem("bluesand-project");
+      const raw =
+        localStorage.getItem("bluesoil-project") ?? localStorage.getItem("bluesand-project");
       if (!raw) return;
       const data = JSON.parse(raw);
       if (data.elements) set({ elements: data.elements });

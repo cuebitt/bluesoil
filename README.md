@@ -1,4 +1,4 @@
-# BlueSand
+# BlueSoil
 
 A visual builder for Basalt 2.5 XML interfaces. Design UI layouts for CC:Tweaked
 computers and monitors, preview them on an accurate terminal renderer, and export
