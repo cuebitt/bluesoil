@@ -10,19 +10,42 @@ import {
   CELL_HEIGHT,
 } from "@/lib/terminal-renderer";
 import { TERMINAL_WIDTH, TERMINAL_HEIGHT } from "@/lib/palette-colors";
-import { findElementById } from "@/lib/elements";
+import { ELEMENT_DEFS, findElementById, type ElementType } from "@/lib/elements";
 import fontUrl from "../../assets/font.png";
+
+const QUICK_ADD_TYPES: ElementType[] = [
+  "frame",
+  "label",
+  "button",
+  "input",
+  "textBox",
+  "checkbox",
+  "list",
+  "dropdown",
+];
+
+interface ContextMenuState {
+  clientX: number;
+  clientY: number;
+  cellX: number;
+  cellY: number;
+  targetId: string | null;
+}
 
 export function TerminalCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [fontError, setFontError] = useState<string | null>(null);
   const [fontReady, setFontReady] = useState(false);
+  const [menu, setMenu] = useState<ContextMenuState | null>(null);
   const elements = useEditorStore((s) => s.elements);
   const selectedId = useEditorStore((s) => s.selectedId);
   const activeTool = useEditorStore((s) => s.activeTool);
   const addElement = useEditorStore((s) => s.addElement);
   const select = useEditorStore((s) => s.select);
+  const duplicateElement = useEditorStore((s) => s.duplicateElement);
+  const copy = useEditorStore((s) => s.copy);
+  const removeElement = useEditorStore((s) => s.removeElement);
 
   const getScale = useCallback(() => {
     if (!wrapperRef.current) return 1;
@@ -120,6 +143,52 @@ export function TerminalCanvas() {
     [activeTool, elements, addElement, select, getScale],
   );
 
+  const handleContextMenu = useCallback(
+    (e: React.MouseEvent<HTMLCanvasElement>) => {
+      e.preventDefault();
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const cell = pixelToCell(e.clientX - rect.left, e.clientY - rect.top, getScale());
+      if (!cell) {
+        setMenu(null);
+        return;
+      }
+      const hit = hitTest(elements, cell.x, cell.y);
+      setMenu({
+        clientX: Math.min(e.clientX, window.innerWidth - 208),
+        clientY: Math.min(e.clientY, window.innerHeight - 320),
+        cellX: cell.x,
+        cellY: cell.y,
+        targetId: hit ? hit.id : null,
+      });
+    },
+    [elements, getScale],
+  );
+
+  const handleAddFromMenu = useCallback(
+    (type: ElementType) => {
+      if (!menu) return;
+      addElement(type, null, useEditorStore.getState().elements.length);
+      const store = useEditorStore.getState();
+      if (store.selectedId) {
+        store.updateAttribute(store.selectedId, "x", menu.cellX + 1);
+        store.updateAttribute(store.selectedId, "y", menu.cellY + 1);
+      }
+      setMenu(null);
+    },
+    [menu, addElement],
+  );
+
+  useEffect(() => {
+    if (!menu) return;
+    const close = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenu(null);
+    };
+    window.addEventListener("keydown", close);
+    return () => window.removeEventListener("keydown", close);
+  }, [menu]);
+
   useEffect(() => {
     const handler = () => draw();
     window.addEventListener("resize", handler);
@@ -150,8 +219,91 @@ export function TerminalCanvas() {
           ref={canvasRef}
           className="cursor-crosshair"
           onClick={handleClick}
+          onContextMenu={handleContextMenu}
           style={{ visibility: fontReady ? "visible" : "hidden" }}
         />
+      )}
+      {menu && (
+        <div
+          className="fixed inset-0 z-50"
+          onClick={() => setMenu(null)}
+          onContextMenu={(e) => {
+            e.preventDefault();
+            setMenu(null);
+          }}
+        >
+          <div
+            className="absolute w-48 rounded-md border bg-popover p-1 text-popover-foreground shadow-md"
+            style={{ left: menu.clientX, top: menu.clientY }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {menu.targetId ? (
+              <>
+                <button
+                  type="button"
+                  className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm hover:bg-muted"
+                  onClick={() => {
+                    select(menu.targetId);
+                    setMenu(null);
+                  }}
+                >
+                  Select
+                </button>
+                <button
+                  type="button"
+                  className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm hover:bg-muted"
+                  onClick={() => {
+                    duplicateElement(menu.targetId!);
+                    setMenu(null);
+                  }}
+                >
+                  Duplicate
+                </button>
+                <button
+                  type="button"
+                  className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm hover:bg-muted"
+                  onClick={() => {
+                    copy(menu.targetId!);
+                    setMenu(null);
+                  }}
+                >
+                  Copy
+                </button>
+                <button
+                  type="button"
+                  className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm text-destructive hover:bg-muted"
+                  onClick={() => {
+                    removeElement(menu.targetId!);
+                    setMenu(null);
+                  }}
+                >
+                  Delete
+                </button>
+              </>
+            ) : (
+              <>
+                <p className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
+                  Add element here
+                </p>
+                {QUICK_ADD_TYPES.map((type) => {
+                  const meta = ELEMENT_DEFS[type];
+                  const Icon = meta.icon;
+                  return (
+                    <button
+                      key={type}
+                      type="button"
+                      className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-muted"
+                      onClick={() => handleAddFromMenu(type)}
+                    >
+                      <Icon className="size-4 shrink-0" />
+                      <span className="truncate">{meta.label}</span>
+                    </button>
+                  );
+                })}
+              </>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );
