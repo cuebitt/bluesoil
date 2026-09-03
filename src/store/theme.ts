@@ -4,7 +4,7 @@ export type ThemeMode = "light" | "dark" | "system";
 
 export type Accent = "neutral" | "blue" | "green" | "amber" | "red" | "violet";
 
-export const ACCENTS: Accent[] = ["neutral", "blue", "green", "amber", "red", "violet"];
+export const ACCENTS: Accent[] = ["neutral", "red", "amber", "green", "blue", "violet"];
 
 const STORAGE_KEY = "bluesoil-theme";
 const LEGACY_STORAGE_KEY = "bluesand-theme";

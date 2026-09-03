@@ -1,14 +1,12 @@
-import { useEffect } from "react";
-import { MainLayout } from "./components/layout/MainLayout";
+import { useEffect, useRef } from "react";
+import { AppHeader } from "./components/layout/AppHeader";
 import { ElementPalette } from "./components/palette/ElementPalette";
 import { ElementTree } from "./components/tree/ElementTree";
-import { TerminalCanvas } from "./components/canvas/TerminalCanvas";
+import { CenterView } from "./components/canvas/CenterView";
 import { PropertyPanel } from "./components/properties/PropertyPanel";
-import { useAutoSave } from "./hooks/useAutoSave";
 import { useEditorStore } from "./store/editor";
 
 function App() {
-  useAutoSave();
   const removeElement = useEditorStore((s) => s.removeElement);
   const selectedId = useEditorStore((s) => s.selectedId);
   const setActiveTool = useEditorStore((s) => s.setActiveTool);
@@ -18,6 +16,22 @@ function App() {
   const duplicateElement = useEditorStore((s) => s.duplicateElement);
   const copy = useEditorStore((s) => s.copy);
   const paste = useEditorStore((s) => s.paste);
+  const elements = useEditorStore((s) => s.elements);
+  const terminalWidth = useEditorStore((s) => s.terminalWidth);
+  const terminalHeight = useEditorStore((s) => s.terminalHeight);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    useEditorStore.getState().loadFromLocalStorage();
+  }, []);
+
+  useEffect(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => useEditorStore.getState().saveToLocalStorage(), 500);
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [elements, terminalWidth, terminalHeight]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -60,16 +74,21 @@ function App() {
   }, [selectedId, removeElement, setActiveTool, select, undo, redo, duplicateElement, copy, paste]);
 
   return (
-    <MainLayout>
-      <div className="flex min-h-0 w-64 shrink-0 flex-col">
-        <ElementPalette />
-        <ElementTree />
+    <div className="flex h-screen flex-col">
+      <AppHeader />
+      <div className="flex flex-1 overflow-x-auto overflow-y-hidden">
+        <div className="flex min-h-0 min-w-[920px] flex-1">
+          <div className="flex min-h-0 w-64 shrink-0 flex-col">
+            <ElementPalette />
+            <ElementTree />
+          </div>
+          <CenterView />
+          <div className="min-h-0 w-72 shrink-0">
+            <PropertyPanel />
+          </div>
+        </div>
       </div>
-      <TerminalCanvas />
-      <div className="min-h-0 w-72 shrink-0">
-        <PropertyPanel />
-      </div>
-    </MainLayout>
+    </div>
   );
 }
 

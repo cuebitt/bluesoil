@@ -22,86 +22,12 @@ function attributesToXml(el: ElementNode): string {
 
   if (el.name) parts.push(`name="${el.name}"`);
 
-  const attrOrder = [
-    "x",
-    "y",
-    "width",
-    "height",
-    "text",
-    "placeholder",
-    "placeholderColor",
-    "maxLength",
-    "replaceChar",
-    "pattern",
-    "background",
-    "foreground",
-    "emptyText",
-    "scrollbar",
-    "dropHeight",
-    "sortable",
-    "value",
-    "maxWidth",
-    "onClick",
-    "onClickUp",
-    "onChange",
-    "onSelect",
-    "onEnter",
-    "onFocus",
-    "onBlur",
-    "onKey",
-    "onScroll",
-    "visible",
-    "z",
-    "checked",
-    "step",
-    "max",
-    "horizontal",
-    "progress",
-    "showPercentage",
-    "direction",
-    "gridColor",
-    "separatorColor",
-    "checkedSymbol",
-    "uncheckedSymbol",
-    "onColor",
-    "offColor",
-    "knobColor",
-    "min",
-    "barColor",
-    "headerBackground",
-    "selectionBackground",
-    "selectionForeground",
-    "active",
-    "activeBackground",
-    "activeForeground",
-    "gap",
-    "padding",
-    "align",
-    "justify",
-    "emptyTextColor",
-    "scrollbarColor",
-    "scrollbarThumbColor",
-    "dropBackground",
-    "open",
-    "spacing",
-  ];
-
-  for (const key of attrOrder) {
-    if (key in el.attributes && key !== "name") {
-      const value = el.attributes[key];
-      // Skip empty event handler references: Basalt would look up
-      // a scope function with an empty name and fail at load time.
-      if (key.startsWith("on") && typeof value === "string" && !value.trim()) {
-        continue;
-      }
-      parts.push(`${key}="${formatAttrValue(value)}"`);
-    }
-  }
-
   for (const [key, value] of Object.entries(el.attributes)) {
-    if (key !== "name" && !attrOrder.includes(key)) {
-      parts.push(`${key}="${formatAttrValue(value)}"`);
-    }
+    if (key === "name") continue;
+    // Skip empty event handler references: Basalt would look up
+    // a scope function with an empty name and fail at load time.
+    if (key.startsWith("on") && typeof value === "string" && !value.trim()) continue;
+    parts.push(`${key}="${formatAttrValue(value)}"`);
   }
 
   return parts.length > 0 ? " " + parts.join(" ") : "";

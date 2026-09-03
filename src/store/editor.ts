@@ -3,6 +3,9 @@ import type { ElementType, ElementNode } from "@/lib/elements";
 import { createElementNode } from "@/lib/elements";
 import { clampTerminalSize } from "@/lib/terminal";
 
+const STORAGE_KEY = "bluesoil-project:v2";
+const LEGACY_STORAGE_KEYS = ["bluesoil-project", "bluesand-project"];
+
 interface EditorStore {
   elements: ElementNode[];
   selectedId: string | null;
@@ -291,7 +294,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   saveToLocalStorage: () => {
     const { elements, terminalWidth, terminalHeight } = get();
     localStorage.setItem(
-      "bluesoil-project",
+      STORAGE_KEY,
       JSON.stringify({ elements, terminalWidth, terminalHeight, version: 2 }),
     );
   },
@@ -299,7 +302,9 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   loadFromLocalStorage: () => {
     try {
       const raw =
-        localStorage.getItem("bluesoil-project") ?? localStorage.getItem("bluesand-project");
+        localStorage.getItem(STORAGE_KEY) ??
+        localStorage.getItem(LEGACY_STORAGE_KEYS[0]) ??
+        localStorage.getItem(LEGACY_STORAGE_KEYS[1]);
       if (!raw) return;
       const data = JSON.parse(raw);
       if (data.elements) {

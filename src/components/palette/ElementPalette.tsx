@@ -1,6 +1,5 @@
 import { useEditorStore } from "@/store/editor";
 import { ELEMENT_DEFS, type ElementType } from "@/lib/elements";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -39,7 +38,7 @@ export function ElementPalette() {
       <div className="border-b px-3 py-2">
         <h2 className="text-sm font-medium">Elements</h2>
       </div>
-      <ScrollArea className="min-h-0 flex-1">
+      <div className="min-h-0 flex-1 overflow-auto">
         <div className="flex flex-col gap-3 p-2">
           {ELEMENT_GROUPS.map((group) => (
             <div key={group.label} className="flex flex-col gap-1">
@@ -72,7 +71,7 @@ export function ElementPalette() {
             </div>
           ))}
         </div>
-      </ScrollArea>
+      </div>
     </div>
   );
 }

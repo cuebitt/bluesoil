@@ -44,7 +44,10 @@ export function AppHeader() {
           value={terminalWidth}
           min={MIN_TERMINAL}
           max={MAX_TERMINAL_W}
-          onChange={(e) => setTerminalSize(Number(e.target.value), terminalHeight)}
+          onChange={(e) => {
+            const next = e.target.valueAsNumber;
+            if (Number.isFinite(next)) setTerminalSize(next, terminalHeight);
+          }}
           className="w-16 rounded-md border bg-background px-1.5 py-1 text-sm"
         />
         <span className="text-sm text-muted-foreground">×</span>
@@ -54,7 +57,10 @@ export function AppHeader() {
           value={terminalHeight}
           min={MIN_TERMINAL}
           max={MAX_TERMINAL_H}
-          onChange={(e) => setTerminalSize(terminalWidth, Number(e.target.value))}
+          onChange={(e) => {
+            const next = e.target.valueAsNumber;
+            if (Number.isFinite(next)) setTerminalSize(terminalWidth, next);
+          }}
           className="w-16 rounded-md border bg-background px-1.5 py-1 text-sm"
         />
         <ImportDialog />

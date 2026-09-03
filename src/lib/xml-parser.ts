@@ -48,10 +48,6 @@ export interface ParseResult {
   warnings: string[];
 }
 
-export function parseBasaltXml(xml: string): ElementNode[] {
-  return parseBasaltXmlWithWarnings(xml).elements;
-}
-
 export function parseBasaltXmlWithWarnings(xml: string): ParseResult {
   const warnings: string[] = [];
   const parser = new DOMParser();

@@ -67,7 +67,7 @@ export type ElementType =
 
 export type AttrFieldType = "text" | "number" | "boolean" | "color" | "select";
 
-export type AttrEditor = "text" | "json";
+export type AttrEditor = "json";
 
 export interface OptionalAttr {
   key: string;
@@ -532,6 +532,15 @@ export function findElementById(elements: ElementNode[], id: string): ElementNod
     if (el.id === id) return el;
     const found = findElementById(el.children, id);
     if (found) return found;
+  }
+  return null;
+}
+
+export function findParent(nodes: ElementNode[], id: string): ElementNode | null {
+  for (const n of nodes) {
+    if (n.children.some((c) => c.id === id)) return n;
+    const p = findParent(n.children, id);
+    if (p) return p;
   }
   return null;
 }

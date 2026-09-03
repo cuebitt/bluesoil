@@ -101,8 +101,8 @@ export function ImportDialog() {
           {error && <p className="text-sm text-destructive">{error}</p>}
           {warnings.length > 0 && (
             <ul className="flex flex-col gap-1 rounded-md border border-amber-500/40 bg-amber-500/10 p-2 text-xs">
-              {warnings.map((w, i) => (
-                <li key={i}>{w}</li>
+              {warnings.map((w) => (
+                <li key={w}>{w}</li>
               ))}
             </ul>
           )}
@@ -118,6 +118,7 @@ export function ImportDialog() {
               id="xml-file-input"
               type="file"
               accept=".xml,.json"
+              aria-label="Upload .xml or .json file"
               className="hidden"
               onChange={handleFileUpload}
             />

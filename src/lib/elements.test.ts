@@ -6,7 +6,7 @@ import {
   type ElementNode,
   type ElementType,
 } from "./elements";
-import { parseBasaltXml, parseBasaltXmlWithWarnings } from "./xml-parser";
+import { parseBasaltXmlWithWarnings } from "./xml-parser";
 import { generateXml } from "./xml-generator";
 
 function node(
@@ -93,7 +93,7 @@ describe("visual-builder new elements", () => {
   });
 
   test.runIf(typeof DOMParser !== "undefined")("Tree parses to tree element with numeric x", () => {
-    const elements = parseBasaltXml('<Tree x="2" y="3"/>');
+    const { elements } = parseBasaltXmlWithWarnings('<Tree x="2" y="3"/>');
     expect(elements).toHaveLength(1);
     expect(elements[0].type).toBe("tree");
     expect(elements[0].attributes.x).toBe(2);
@@ -126,7 +126,9 @@ describe("visual-builder new elements", () => {
   });
 
   test.runIf(typeof DOMParser !== "undefined")("PixelGraph parses with numeric min/max", () => {
-    const elements = parseBasaltXml('<PixelGraph x="2" minValue="0" maxValue="100"/>');
+    const { elements } = parseBasaltXmlWithWarnings(
+      '<PixelGraph x="2" minValue="0" maxValue="100"/>',
+    );
     expect(elements).toHaveLength(1);
     expect(elements[0].type).toBe("pixelGraph");
     expect(elements[0].attributes.minValue).toBe(0);

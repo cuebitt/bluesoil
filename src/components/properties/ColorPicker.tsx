@@ -6,9 +6,10 @@ const COLOR_ENTRIES = Object.keys(CC_PALETTE);
 interface ColorPickerProps {
   value: string;
   onChange: (hex: string) => void;
+  labelledBy?: string;
 }
 
-export function ColorPicker({ value, onChange }: ColorPickerProps) {
+export function ColorPicker({ value, onChange, labelledBy }: ColorPickerProps) {
   const currentHex = typeof value === "string" && value.startsWith("#") ? value : "#000000";
 
   return (
@@ -17,7 +18,7 @@ export function ColorPicker({ value, onChange }: ColorPickerProps) {
         <div className="size-6 rounded border" style={{ backgroundColor: currentHex }} />
         <span className="text-xs text-muted-foreground">{currentHex}</span>
       </div>
-      <div className="grid grid-cols-4 gap-1">
+      <div className="grid grid-cols-4 gap-1" role="group" aria-labelledby={labelledBy}>
         {COLOR_ENTRIES.map((idx) => {
           const hex = ccToHex(idx);
           return (

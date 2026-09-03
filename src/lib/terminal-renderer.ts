@@ -70,61 +70,35 @@ export function createGrid(w: number, h: number): TerminalGrid {
   return grid;
 }
 
+const SHORT_LABELS: Partial<Record<ElementNode["type"], string>> = {
+  barChart: "Bar",
+  lineChart: "Line",
+  bigFont: "Big",
+  pixelGraph: "Pixel",
+};
+
 export function renderToGrid(elements: ElementNode[], w: number, h: number): TerminalGrid {
   const grid = createGrid(w, h);
 
   function renderElement(el: ElementNode) {
     const x = (el.attributes.x as number) || 1;
     const y = (el.attributes.y as number) || 1;
-    const w = (el.attributes.width as number) || 10;
-    const h = (el.attributes.height as number) || 3;
+    const ew = (el.attributes.width as number) || 10;
+    const eh = (el.attributes.height as number) || 3;
     const bg = el.attributes.background;
     const fg = el.attributes.foreground;
     const text = (el.attributes.text as string) || "";
 
-    let label = text;
-    switch (el.type) {
-      case "image":
-        label = text || "Image";
-        break;
-      case "graph":
-        label = text || "Graph";
-        break;
-      case "barChart":
-        label = text || "Bar";
-        break;
-      case "lineChart":
-        label = text || "Line";
-        break;
-      case "tree":
-        label = text || "Tree";
-        break;
-      case "canvas":
-        label = text || "Canvas";
-        break;
-      case "bigFont":
-        label = text || "Big";
-        break;
-      case "program":
-        label = text || "Program";
-        break;
-      case "container":
-        label = text || "Container";
-        break;
-      case "pixelGraph":
-        label = text || "Pixel";
-        break;
-      default:
-        break;
-    }
+    const label =
+      text || SHORT_LABELS[el.type] || el.type.charAt(0).toUpperCase() + el.type.slice(1);
 
     if (bg && typeof bg !== "boolean") {
       const bgIdx = resolveColor(bg);
-      for (let dy = 0; dy < h; dy++) {
-        for (let dx = 0; dx < w; dx++) {
+      for (let dy = 0; dy < eh; dy++) {
+        for (let dx = 0; dx < ew; dx++) {
           const gx = x - 1 + dx;
           const gy = y - 1 + dy;
-          if (gy >= 0 && gy < h && gx >= 0 && gx < w) {
+          if (gy >= 0 && gy < grid.length && gx >= 0 && gx < grid[0].length) {
             grid[gy][gx].bg = bgIdx;
           }
         }
@@ -132,20 +106,20 @@ export function renderToGrid(elements: ElementNode[], w: number, h: number): Ter
     }
 
     const fgIdx = fg ? resolveColor(fg) : "0";
-    for (let i = 0; i < label.length && i < w; i++) {
+    for (let i = 0; i < label.length && i < ew; i++) {
       const gx = x - 1 + i;
       const gy = y - 1;
-      if (gy >= 0 && gy < h && gx >= 0 && gx < w) {
+      if (gy >= 0 && gy < grid.length && gx >= 0 && gx < grid[0].length) {
         grid[gy][gx].char = label[i];
         grid[gy][gx].fg = fgIdx;
       }
     }
 
     if (el.type === "bigFont") {
-      for (let i = 0; i < label.length && i < w; i++) {
+      for (let i = 0; i < label.length && i < ew; i++) {
         const gx = x - 1 + i;
         const gy = y;
-        if (gy >= 0 && gy < h && gx >= 0 && gx < w) {
+        if (gy >= 0 && gy < grid.length && gx >= 0 && gx < grid[0].length) {
           grid[gy][gx].char = label[i];
           grid[gy][gx].fg = fgIdx;
         }
