@@ -43,6 +43,8 @@ export function AttributeField({
   if (isJsonValue(editor, value)) {
     return <JsonField label={label} keyName={keyName} value={value} onChange={onChange} />;
   }
+  // Objects (incl. arrays) render as JSON above, so the remaining value is primitive.
+  const primitive = value as string | number | boolean;
   switch (inferAttrType(value, type)) {
     case "boolean":
       return (
@@ -58,7 +60,7 @@ export function AttributeField({
         <ColorField
           labelId={fieldId}
           label={label}
-          value={String(value)}
+          value={String(primitive)}
           onChange={(hex) => onChange(keyName, hex)}
         />
       );
@@ -67,7 +69,7 @@ export function AttributeField({
         <SelectField
           id={fieldId}
           label={label}
-          value={String(value)}
+          value={String(primitive)}
           options={options ?? []}
           error={error}
           onChange={(next) => onChange(keyName, next)}
@@ -78,7 +80,7 @@ export function AttributeField({
         <TextField
           id={fieldId}
           label={label}
-          value={value}
+          value={primitive}
           numeric={inferAttrType(value, type) === "number"}
           error={error}
           onChange={(next) => onChange(keyName, next)}
@@ -177,7 +179,7 @@ function TextField({
 }: {
   id: string;
   label: string;
-  value: FieldValue;
+  value: string | number | boolean;
   numeric: boolean;
   error?: string | null;
   onChange: (next: string | number) => void;
