@@ -125,7 +125,8 @@ function attributesToXml(el: ElementNode): string {
   return parts.length > 0 ? " " + parts.join(" ") : "";
 }
 
-function formatAttrValue(value: string | number | boolean): string {
+function formatAttrValue(value: string | number | boolean | object): string {
+  if (typeof value === "object" && value !== null) return JSON.stringify(value);
   if (typeof value === "boolean") return value ? "true" : "false";
   if (typeof value === "number") return String(value);
   // Entity-escaping is safe for reactive {expr} values too: the XML

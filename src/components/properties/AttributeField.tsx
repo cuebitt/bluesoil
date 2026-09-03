@@ -1,14 +1,17 @@
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import type { AttrFieldType } from "@/lib/elements";
+import { Textarea } from "@/components/ui/textarea";
+import type { AttrEditor, AttrFieldType } from "@/lib/elements";
 import { ColorPicker } from "./ColorPicker";
 
 interface AttributeFieldProps {
   label: string;
   keyName: string;
-  value: string | number | boolean;
-  onChange: (key: string, value: string | number | boolean) => void;
+  value: string | number | boolean | object;
+  onChange: (key: string, value: string | number | boolean | object) => void;
   type?: AttrFieldType;
+  editor?: AttrEditor;
   options?: string[];
   error?: string | null;
 }
@@ -19,12 +22,17 @@ export function AttributeField({
   value,
   onChange,
   type,
+  editor,
   options,
   error,
 }: AttributeFieldProps) {
   const inferredType =
     type ??
     (typeof value === "boolean" ? "boolean" : typeof value === "number" ? "number" : "text");
+
+  if (editor === "json" || (typeof value === "object" && value !== null)) {
+    return <JsonField label={label} keyName={keyName} value={value} onChange={onChange} />;
+  }
 
   if (inferredType === "boolean") {
     return (
@@ -76,6 +84,43 @@ export function AttributeField({
           onChange(keyName, val);
         }}
         type={inferredType === "number" ? "number" : "text"}
+      />
+      {error && <p className="text-xs text-destructive">{error}</p>}
+    </div>
+  );
+}
+
+function JsonField({
+  label,
+  keyName,
+  value,
+  onChange,
+}: {
+  label: string;
+  keyName: string;
+  value: string | number | boolean | object;
+  onChange: (key: string, value: string | number | boolean | object) => void;
+}) {
+  const fallback = keyName === "bimg" ? {} : [];
+  const effective = value === "" ? fallback : value;
+  const [draft, setDraft] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  return (
+    <div className="flex flex-col gap-1">
+      <label className="text-sm">{label}</label>
+      <Textarea
+        value={draft ?? JSON.stringify(effective, null, 2)}
+        onChange={(e) => {
+          setDraft(e.target.value);
+          try {
+            onChange(keyName, JSON.parse(e.target.value));
+            setError(null);
+          } catch {
+            setError("Invalid JSON, keeping last good value.");
+          }
+        }}
+        className="font-mono"
       />
       {error && <p className="text-xs text-destructive">{error}</p>}
     </div>

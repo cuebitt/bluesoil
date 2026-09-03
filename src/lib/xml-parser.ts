@@ -25,6 +25,16 @@ const TAG_MAP: Record<string, ElementType> = {
   menu: "menu",
   contextmenu: "contextMenu",
   toast: "toast",
+  image: "image",
+  graph: "graph",
+  barchart: "barChart",
+  linechart: "lineChart",
+  tree: "tree",
+  display: "display",
+  bigfont: "bigFont",
+  program: "program",
+  container: "container",
+  sidenav: "sideNav",
 };
 
 interface XmlNode {
@@ -121,6 +131,13 @@ function convertAttrValue(key: string, value: string): string | number | boolean
       "padding",
       "spacing",
       "progress",
+      "currentFrame",
+      "minValue",
+      "maxValue",
+      "offsetX",
+      "offsetY",
+      "fontSize",
+      "sidebarWidth",
     ].includes(key)
   ) {
     const num = Number(value);

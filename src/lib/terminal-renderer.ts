@@ -82,6 +82,42 @@ export function renderToGrid(elements: ElementNode[], w: number, h: number): Ter
     const fg = el.attributes.foreground;
     const text = (el.attributes.text as string) || "";
 
+    let label = text;
+    switch (el.type) {
+      case "image":
+        label = text || "Image";
+        break;
+      case "graph":
+        label = text || "Graph";
+        break;
+      case "barChart":
+        label = text || "Bar";
+        break;
+      case "lineChart":
+        label = text || "Line";
+        break;
+      case "tree":
+        label = text || "Tree";
+        break;
+      case "display":
+        label = text || "Display";
+        break;
+      case "bigFont":
+        label = text || "Big";
+        break;
+      case "program":
+        label = text || "Program";
+        break;
+      case "container":
+        label = text || "Container";
+        break;
+      case "sideNav":
+        label = text || "SideNav";
+        break;
+      default:
+        break;
+    }
+
     if (bg && typeof bg !== "boolean") {
       const bgIdx = resolveColor(bg);
       for (let dy = 0; dy < h; dy++) {
@@ -96,12 +132,23 @@ export function renderToGrid(elements: ElementNode[], w: number, h: number): Ter
     }
 
     const fgIdx = fg ? resolveColor(fg) : "0";
-    for (let i = 0; i < text.length && i < w; i++) {
+    for (let i = 0; i < label.length && i < w; i++) {
       const gx = x - 1 + i;
       const gy = y - 1;
       if (gy >= 0 && gy < h && gx >= 0 && gx < w) {
-        grid[gy][gx].char = text[i];
+        grid[gy][gx].char = label[i];
         grid[gy][gx].fg = fgIdx;
+      }
+    }
+
+    if (el.type === "bigFont") {
+      for (let i = 0; i < label.length && i < w; i++) {
+        const gx = x - 1 + i;
+        const gy = y;
+        if (gy >= 0 && gy < h && gx >= 0 && gx < w) {
+          grid[gy][gx].char = label[i];
+          grid[gy][gx].fg = fgIdx;
+        }
       }
     }
 
@@ -116,7 +163,7 @@ export function renderToGrid(elements: ElementNode[], w: number, h: number): Ter
   return grid;
 }
 
-function resolveColor(val: string | number | boolean): string {
+function resolveColor(val: string | number | boolean | object): string {
   if (typeof val === "string" && val.startsWith("#")) return hexToCC(val);
   if (typeof val === "string") return val;
   return "f";

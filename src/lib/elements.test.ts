@@ -1,5 +1,13 @@
 import { describe, expect, test } from "vite-plus/test";
-import { ELEMENT_DEFS, isDraggable, type ElementNode, type ElementType } from "./elements";
+import {
+  ELEMENT_DEFS,
+  createElementNode,
+  isDraggable,
+  type ElementNode,
+  type ElementType,
+} from "./elements";
+import { parseBasaltXml } from "./xml-parser";
+import { generateXml } from "./xml-generator";
 
 function node(
   type: ElementType,
@@ -63,5 +71,24 @@ describe("widget scalar props", () => {
 
   test("tabControl exposes active", () => {
     expect(ELEMENT_DEFS.tabControl.optionalAttrs.some((a) => a.key === "active")).toBe(true);
+  });
+});
+
+describe("visual-builder new elements", () => {
+  test("tree def exposes nodeColor", () => {
+    expect(ELEMENT_DEFS.tree.optionalAttrs.some((a) => a.key === "nodeColor")).toBe(true);
+  });
+
+  test.runIf(typeof DOMParser !== "undefined")("Tree parses to tree element with numeric x", () => {
+    const elements = parseBasaltXml('<Tree x="2" y="3"/>');
+    expect(elements).toHaveLength(1);
+    expect(elements[0].type).toBe("tree");
+    expect(elements[0].attributes.x).toBe(2);
+  });
+
+  test("tree nodes export as JSON string", () => {
+    const node = createElementNode("tree");
+    node.attributes.nodes = [{ label: "a" }];
+    expect(generateXml([node])).toContain(JSON.stringify([{ label: "a" }]));
   });
 });

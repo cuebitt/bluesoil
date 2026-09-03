@@ -28,7 +28,8 @@ export function PropertyPanel() {
   }
 
   const meta = ELEMENT_DEFS[element.type];
-  const update = (k: string, v: string | number | boolean) => updateAttribute(element.id, k, v);
+  const update = (k: string, v: string | number | boolean | object) =>
+    updateAttribute(element.id, k, v);
 
   return (
     <div className="flex h-full min-h-0 flex-col border-l">
@@ -155,6 +156,7 @@ export function PropertyPanel() {
                 }
                 onChange={update}
                 type={attr.type}
+                editor={attr.editor}
                 options={attr.options}
               />
             ))}
@@ -183,8 +185,8 @@ function EventField({
   onChange,
 }: {
   eventKey: string;
-  value: string | number | boolean | undefined;
-  onChange: (key: string, value: string | number | boolean) => void;
+  value: string | number | boolean | object | undefined;
+  onChange: (key: string, value: string | number | boolean | object) => void;
 }) {
   const text = typeof value === "string" ? value : "";
   return (

@@ -21,6 +21,14 @@ import {
   Menu,
   PanelLeftOpen,
   Info,
+  Image,
+  ChartLine,
+  ChartColumn,
+  Network,
+  Type,
+  SquareTerminal,
+  Box,
+  PanelLeft,
 } from "lucide-react";
 
 export type ElementType =
@@ -44,22 +52,35 @@ export type ElementType =
   | "flex"
   | "menu"
   | "contextMenu"
-  | "toast";
+  | "toast"
+  | "image"
+  | "graph"
+  | "barChart"
+  | "lineChart"
+  | "tree"
+  | "display"
+  | "bigFont"
+  | "program"
+  | "container"
+  | "sideNav";
 
 export type AttrFieldType = "text" | "number" | "boolean" | "color" | "select";
+
+export type AttrEditor = "text" | "json";
 
 export interface OptionalAttr {
   key: string;
   label: string;
   type: AttrFieldType;
   options?: string[];
+  editor?: AttrEditor;
 }
 
 export interface ElementMeta {
   label: string;
   icon: LucideIcon;
   isContainer: boolean;
-  defaultProps: Record<string, string | number | boolean>;
+  defaultProps: Record<string, string | number | boolean | object>;
   fieldGroups: Array<"position" | "size" | "appearance" | "content" | "behavior" | "events">;
   optionalAttrs: OptionalAttr[];
   eventAttrs: string[];
@@ -69,7 +90,7 @@ export interface ElementNode {
   id: string;
   type: ElementType;
   name: string;
-  attributes: Record<string, string | number | boolean>;
+  attributes: Record<string, string | number | boolean | object>;
   children: ElementNode[];
 }
 
@@ -153,6 +174,7 @@ export const ELEMENT_DEFS: Record<ElementType, ElementMeta> = {
       },
       { key: "scrollbarColor", label: "Scrollbar Color", type: "color" },
       { key: "scrollbarThumbColor", label: "Scrollbar Thumb Color", type: "color" },
+      { key: "items", label: "Items", type: "text", editor: "json" },
     ],
     eventAttrs: ["onChange", "onSelect"],
   },
@@ -168,6 +190,7 @@ export const ELEMENT_DEFS: Record<ElementType, ElementMeta> = {
       { key: "scrollbarColor", label: "Scrollbar Color", type: "color" },
       { key: "scrollbarThumbColor", label: "Scrollbar Thumb Color", type: "color" },
       { key: "open", label: "Open", type: "boolean" },
+      { key: "items", label: "Items", type: "text", editor: "json" },
     ],
     eventAttrs: ["onSelect", "onChange"],
   },
@@ -256,6 +279,8 @@ export const ELEMENT_DEFS: Record<ElementType, ElementMeta> = {
       { key: "headerBackground", label: "Header Background", type: "color" },
       { key: "selectionBackground", label: "Selection Background", type: "color" },
       { key: "selectionForeground", label: "Selection Foreground", type: "color" },
+      { key: "columns", label: "Columns", type: "text", editor: "json" },
+      { key: "data", label: "Data", type: "text", editor: "json" },
     ],
     eventAttrs: ["onSelect", "onChange"],
   },
@@ -270,6 +295,7 @@ export const ELEMENT_DEFS: Record<ElementType, ElementMeta> = {
       { key: "headerBackground", label: "Header Background", type: "color" },
       { key: "activeBackground", label: "Active Background", type: "color" },
       { key: "activeForeground", label: "Active Foreground", type: "color" },
+      { key: "tabs", label: "Tabs", type: "text", editor: "json" },
     ],
     eventAttrs: ["onChange"],
   },
@@ -360,6 +386,134 @@ export const ELEMENT_DEFS: Record<ElementType, ElementMeta> = {
     fieldGroups: ["position", "size", "appearance", "events"],
     optionalAttrs: [],
     eventAttrs: ["onClick"],
+  },
+  image: {
+    label: "Image",
+    icon: Image,
+    isContainer: false,
+    defaultProps: { x: 1, y: 1, width: 10, height: 8 },
+    fieldGroups: ["position", "size", "appearance", "behavior"],
+    optionalAttrs: [
+      { key: "currentFrame", label: "Current Frame", type: "number" },
+      { key: "autoResize", label: "Auto Resize", type: "boolean" },
+      { key: "offsetX", label: "Offset X", type: "number" },
+      { key: "offsetY", label: "Offset Y", type: "number" },
+      { key: "bimg", label: "Bimg", type: "text", editor: "json" },
+    ],
+    eventAttrs: [],
+  },
+  graph: {
+    label: "Graph",
+    icon: ChartLine,
+    isContainer: false,
+    defaultProps: { x: 1, y: 1, width: 20, height: 10 },
+    fieldGroups: ["position", "size", "appearance", "behavior"],
+    optionalAttrs: [
+      { key: "minValue", label: "Min Value", type: "number" },
+      { key: "maxValue", label: "Max Value", type: "number" },
+      { key: "series", label: "Series", type: "text", editor: "json" },
+    ],
+    eventAttrs: [],
+  },
+  barChart: {
+    label: "BarChart",
+    icon: ChartColumn,
+    isContainer: false,
+    defaultProps: { x: 1, y: 1, width: 20, height: 10 },
+    fieldGroups: ["position", "size", "appearance", "behavior"],
+    optionalAttrs: [
+      { key: "minValue", label: "Min Value", type: "number" },
+      { key: "maxValue", label: "Max Value", type: "number" },
+      { key: "series", label: "Series", type: "text", editor: "json" },
+    ],
+    eventAttrs: [],
+  },
+  lineChart: {
+    label: "LineChart",
+    icon: ChartLine,
+    isContainer: false,
+    defaultProps: { x: 1, y: 1, width: 20, height: 10 },
+    fieldGroups: ["position", "size", "appearance", "behavior"],
+    optionalAttrs: [
+      { key: "minValue", label: "Min Value", type: "number" },
+      { key: "maxValue", label: "Max Value", type: "number" },
+      { key: "series", label: "Series", type: "text", editor: "json" },
+    ],
+    eventAttrs: [],
+  },
+  tree: {
+    label: "Tree",
+    icon: Network,
+    isContainer: false,
+    defaultProps: { x: 1, y: 1, width: 20, height: 10 },
+    fieldGroups: ["position", "size", "appearance", "behavior"],
+    optionalAttrs: [
+      { key: "nodeColor", label: "Node Color", type: "color" },
+      { key: "selectedColor", label: "Selected Color", type: "color" },
+      { key: "nodes", label: "Nodes", type: "text", editor: "json" },
+    ],
+    eventAttrs: [],
+  },
+  display: {
+    label: "Display",
+    icon: Monitor,
+    isContainer: false,
+    defaultProps: { x: 1, y: 1, width: 20, height: 10 },
+    fieldGroups: ["position", "size", "appearance"],
+    optionalAttrs: [],
+    eventAttrs: [],
+  },
+  bigFont: {
+    label: "BigFont",
+    icon: Type,
+    isContainer: false,
+    defaultProps: { x: 1, y: 1, width: 10, height: 2, text: "Big" },
+    fieldGroups: ["position", "size", "appearance", "content"],
+    optionalAttrs: [{ key: "fontSize", label: "Font Size", type: "number" }],
+    eventAttrs: [],
+  },
+  program: {
+    label: "Program",
+    icon: SquareTerminal,
+    isContainer: false,
+    defaultProps: { x: 1, y: 1, width: 20, height: 15 },
+    fieldGroups: ["position", "size", "appearance", "behavior"],
+    optionalAttrs: [
+      { key: "path", label: "Path", type: "text" },
+      { key: "running", label: "Running", type: "boolean" },
+    ],
+    eventAttrs: [],
+  },
+  container: {
+    label: "Container",
+    icon: Box,
+    isContainer: true,
+    defaultProps: { x: 1, y: 1, width: 10, height: 5 },
+    fieldGroups: ["position", "size", "appearance", "behavior"],
+    optionalAttrs: [
+      { key: "offsetX", label: "Offset X", type: "number" },
+      { key: "offsetY", label: "Offset Y", type: "number" },
+    ],
+    eventAttrs: [],
+  },
+  sideNav: {
+    label: "SideNav",
+    icon: PanelLeft,
+    isContainer: true,
+    defaultProps: { x: 1, y: 1, width: 30, height: 15 },
+    fieldGroups: ["position", "size", "appearance", "behavior"],
+    optionalAttrs: [
+      { key: "active", label: "Active", type: "number" },
+      { key: "sidebarWidth", label: "Sidebar Width", type: "number" },
+      {
+        key: "sidebarPosition",
+        label: "Sidebar Position",
+        type: "select",
+        options: ["left", "right"],
+      },
+      { key: "tabs", label: "Tabs", type: "text", editor: "json" },
+    ],
+    eventAttrs: [],
   },
 };
 

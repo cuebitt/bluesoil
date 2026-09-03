@@ -20,7 +20,7 @@ interface EditorStore {
   moveElementUp: (id: string) => void;
   moveElementDown: (id: string) => void;
   duplicateElement: (id: string) => void;
-  updateAttribute: (id: string, key: string, value: string | number | boolean) => void;
+  updateAttribute: (id: string, key: string, value: string | number | boolean | object) => void;
   renameElement: (id: string, name: string) => void;
   select: (id: string | null) => void;
   setActiveTool: (type: ElementType | null) => void;
@@ -133,7 +133,7 @@ function updateElementAttr(
   elements: ElementNode[],
   id: string,
   key: string,
-  value: string | number | boolean,
+  value: string | number | boolean | object,
 ): ElementNode[] {
   return elements.map((el) => {
     if (el.id === id) return { ...el, attributes: { ...el.attributes, [key]: value } };

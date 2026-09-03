@@ -26,6 +26,16 @@ const ELEMENT_TYPES: ElementType[] = [
   "menu",
   "contextMenu",
   "toast",
+  "image",
+  "graph",
+  "barChart",
+  "lineChart",
+  "tree",
+  "display",
+  "bigFont",
+  "program",
+  "container",
+  "sideNav",
 ];
 
 export function ElementPalette() {
