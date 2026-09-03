@@ -3,27 +3,43 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useEditorStore } from "@/store/editor";
-import { parseBasaltXml } from "@/lib/xml-parser";
+import { parseBasaltXmlWithWarnings } from "@/lib/xml-parser";
 import { Upload } from "lucide-react";
 
 export function ImportDialog() {
   const [xml, setXml] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [warnings, setWarnings] = useState<string[]>([]);
   const [open, setOpen] = useState(false);
   const setElements = useEditorStore((s) => s.setElements);
   const elements = useEditorStore((s) => s.elements);
 
   const handleImport = () => {
     if (elements.length > 0 && !confirm("This will replace the current project. Continue?")) return;
-    setElements(parseBasaltXml(xml));
-    setOpen(false);
-    setXml("");
+    try {
+      const { elements: parsed, warnings: parseWarnings } = parseBasaltXmlWithWarnings(xml);
+      setElements(parsed);
+      setWarnings(parseWarnings);
+      setError(null);
+      if (parseWarnings.length === 0) {
+        setOpen(false);
+        setXml("");
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to parse XML.");
+      setWarnings([]);
+    }
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (ev) => setXml(ev.target?.result as string);
+    reader.onload = (ev) => {
+      setXml(ev.target?.result as string);
+      setError(null);
+      setWarnings([]);
+    };
     reader.readAsText(file);
   };
 
@@ -40,10 +56,24 @@ export function ImportDialog() {
         <div className="flex flex-col gap-3">
           <Textarea
             value={xml}
-            onChange={(e) => setXml(e.target.value)}
+            onChange={(e) => {
+              setXml(e.target.value);
+              setError(null);
+              setWarnings([]);
+            }}
             placeholder="Paste Basalt XML here..."
             className="min-h-48 font-mono text-xs"
           />
+          {error && (
+            <p className="text-sm text-destructive">{error}</p>
+          )}
+          {warnings.length > 0 && (
+            <ul className="flex flex-col gap-1 rounded-md border border-amber-500/40 bg-amber-500/10 p-2 text-xs">
+              {warnings.map((w, i) => (
+                <li key={i}>{w}</li>
+              ))}
+            </ul>
+          )}
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={() => document.getElementById("xml-file-input")?.click()}>
               Upload .xml file
