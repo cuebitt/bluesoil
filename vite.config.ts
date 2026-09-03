@@ -10,7 +10,9 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  fmt: {},
+  fmt: {
+    ignorePatterns: ["src/components/ui/**"],
+  },
   lint: {
     ignorePatterns: ["src/components/ui/**"],
     plugins: ["react", "typescript", "oxc"],
