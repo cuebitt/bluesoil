@@ -38,19 +38,30 @@ describe("isDraggable", () => {
 });
 
 describe("widget scalar props", () => {
-  test("slider exposes step", () => {
-    expect(ELEMENT_DEFS.slider.optionalAttrs.some((a) => a.key === "step")).toBe(true);
+  test("slider exposes min", () => {
+    expect(ELEMENT_DEFS.slider.optionalAttrs.some((a) => a.key === "min")).toBe(true);
   });
 
-  test("list exposes selectable", () => {
-    expect(ELEMENT_DEFS.list.optionalAttrs.some((a) => a.key === "selectable")).toBe(true);
+  test("switch exposes onColor and not onBackground", () => {
+    const keys = ELEMENT_DEFS.switch.optionalAttrs.map((a) => a.key);
+    expect(keys).toContain("onColor");
+    expect(keys).not.toContain("onBackground");
   });
 
-  test("list scrollbar is a select", () => {
-    expect(ELEMENT_DEFS.list.optionalAttrs.find((a) => a.key === "scrollbar")?.type).toBe("select");
+  test("list exposes scrollbarColor and not selectable", () => {
+    const keys = ELEMENT_DEFS.list.optionalAttrs.map((a) => a.key);
+    expect(keys).toContain("scrollbarColor");
+    expect(keys).not.toContain("selectable");
   });
 
-  test("switch exposes onBackground", () => {
-    expect(ELEMENT_DEFS.switch.optionalAttrs.some((a) => a.key === "onBackground")).toBe(true);
+  test("flex direction options are row and column", () => {
+    expect(ELEMENT_DEFS.flex.optionalAttrs.find((a) => a.key === "direction")?.options).toEqual([
+      "row",
+      "column",
+    ]);
+  });
+
+  test("tabControl exposes active", () => {
+    expect(ELEMENT_DEFS.tabControl.optionalAttrs.some((a) => a.key === "active")).toBe(true);
   });
 });
