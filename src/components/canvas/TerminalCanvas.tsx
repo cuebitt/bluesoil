@@ -1,6 +1,14 @@
 import { useEffect, useRef, useCallback, useState } from "react";
 import { useEditorStore } from "@/store/editor";
-import { loadFont, renderToGrid, drawGrid, pixelToCell, hitTest, CELL_WIDTH, CELL_HEIGHT } from "@/lib/terminal-renderer";
+import {
+  loadFont,
+  renderToGrid,
+  drawGrid,
+  pixelToCell,
+  hitTest,
+  CELL_WIDTH,
+  CELL_HEIGHT,
+} from "@/lib/terminal-renderer";
 import { TERMINAL_WIDTH, TERMINAL_HEIGHT } from "@/lib/palette-colors";
 import type { ElementNode } from "@/lib/elements";
 import fontUrl from "../../assets/font.png";
@@ -15,25 +23,6 @@ export function TerminalCanvas() {
   const activeTool = useEditorStore((s) => s.activeTool);
   const addElement = useEditorStore((s) => s.addElement);
   const select = useEditorStore((s) => s.select);
-
-  const load = useCallback(() => {
-    setFontError(null);
-    loadFont(fontUrl).then(
-      () => {
-        setFontReady(true);
-        draw();
-      },
-      (err: unknown) => {
-        setFontError(err instanceof Error ? err.message : "Failed to load terminal font.");
-      },
-    );
-  }, []);
-
-  useEffect(() => {
-    load();
-  }, [load]);
-
-  useEffect(() => { draw(); }, [elements, selectedId]);
 
   const getScale = useCallback(() => {
     if (!wrapperRef.current) return 1;
@@ -84,6 +73,27 @@ export function TerminalCanvas() {
     }
   }, [elements, selectedId, getScale]);
 
+  const load = useCallback(() => {
+    setFontError(null);
+    loadFont(fontUrl).then(
+      () => {
+        setFontReady(true);
+        draw();
+      },
+      (err: unknown) => {
+        setFontError(err instanceof Error ? err.message : "Failed to load terminal font.");
+      },
+    );
+  }, [draw]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  useEffect(() => {
+    draw();
+  }, [draw]);
+
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>) => {
       const canvas = canvasRef.current;
@@ -117,11 +127,16 @@ export function TerminalCanvas() {
   }, [draw]);
 
   return (
-    <div ref={wrapperRef} className="flex flex-1 items-center justify-center overflow-auto bg-neutral-900">
+    <div
+      ref={wrapperRef}
+      className="flex flex-1 items-center justify-center overflow-auto bg-neutral-900"
+    >
       {fontError ? (
         <div className="flex flex-col items-center gap-3 p-6 text-center">
           <p className="text-sm text-neutral-300">{fontError}</p>
-          <p className="text-xs text-neutral-500">The terminal preview cannot render without the font sprite.</p>
+          <p className="text-xs text-neutral-500">
+            The terminal preview cannot render without the font sprite.
+          </p>
           <button
             type="button"
             onClick={load}
@@ -131,7 +146,12 @@ export function TerminalCanvas() {
           </button>
         </div>
       ) : (
-        <canvas ref={canvasRef} className="cursor-crosshair" onClick={handleClick} style={{ visibility: fontReady ? "visible" : "hidden" }} />
+        <canvas
+          ref={canvasRef}
+          className="cursor-crosshair"
+          onClick={handleClick}
+          style={{ visibility: fontReady ? "visible" : "hidden" }}
+        />
       )}
     </div>
   );

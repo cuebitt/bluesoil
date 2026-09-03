@@ -1,5 +1,11 @@
 import { useState, useMemo } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
@@ -64,8 +70,12 @@ export function ExportDialog() {
               </Highlight>
             </div>
             <div className="mt-2 flex gap-2">
-              <Button size="sm" onClick={() => navigator.clipboard.writeText(xml)}>Copy</Button>
-              <Button size="sm" variant="outline" onClick={() => download(xml, "ui.xml")}>Download .xml</Button>
+              <Button size="sm" onClick={() => navigator.clipboard.writeText(xml)}>
+                Copy
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => download(xml, "ui.xml")}>
+                Download .xml
+              </Button>
             </div>
           </TabsContent>
           {includeLua && (
@@ -86,8 +96,12 @@ export function ExportDialog() {
                 </Highlight>
               </div>
               <div className="mt-2 flex gap-2">
-                <Button size="sm" onClick={() => navigator.clipboard.writeText(lua)}>Copy</Button>
-                <Button size="sm" variant="outline" onClick={() => download(lua, "startup.lua")}>Download .lua</Button>
+                <Button size="sm" onClick={() => navigator.clipboard.writeText(lua)}>
+                  Copy
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => download(lua, "startup.lua")}>
+                  Download .lua
+                </Button>
               </div>
             </TabsContent>
           )}

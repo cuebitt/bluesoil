@@ -43,35 +43,82 @@ export function PropertyPanel() {
 
           <div className="flex flex-col gap-1">
             <label className="text-sm">Name</label>
-            <Input value={element.name} onChange={(e) => renameElement(element.id, e.target.value)} placeholder="element_name" />
+            <Input
+              value={element.name}
+              onChange={(e) => renameElement(element.id, e.target.value)}
+              placeholder="element_name"
+            />
             {element.name && !isValidLuaName(element.name) && (
-              <p className="text-xs text-destructive">Not a valid Lua identifier; the generated scaffold will not run.</p>
+              <p className="text-xs text-destructive">
+                Not a valid Lua identifier; the generated scaffold will not run.
+              </p>
             )}
           </div>
 
           {meta.fieldGroups.includes("position") && (
             <>
-              <AttributeField label="X" keyName="x" value={element.attributes.x ?? 1} onChange={update} type="number" />
-              <AttributeField label="Y" keyName="y" value={element.attributes.y ?? 1} onChange={update} type="number" />
+              <AttributeField
+                label="X"
+                keyName="x"
+                value={element.attributes.x ?? 1}
+                onChange={update}
+                type="number"
+              />
+              <AttributeField
+                label="Y"
+                keyName="y"
+                value={element.attributes.y ?? 1}
+                onChange={update}
+                type="number"
+              />
             </>
           )}
 
           {meta.fieldGroups.includes("size") && (
             <>
-              <AttributeField label="Width" keyName="width" value={element.attributes.width ?? 10} onChange={update} type="number" />
-              <AttributeField label="Height" keyName="height" value={element.attributes.height ?? 3} onChange={update} type="number" />
+              <AttributeField
+                label="Width"
+                keyName="width"
+                value={element.attributes.width ?? 10}
+                onChange={update}
+                type="number"
+              />
+              <AttributeField
+                label="Height"
+                keyName="height"
+                value={element.attributes.height ?? 3}
+                onChange={update}
+                type="number"
+              />
             </>
           )}
 
           {meta.fieldGroups.includes("appearance") && (
             <>
-              <AttributeField label="Background" keyName="background" value={element.attributes.background ?? "#000000"} onChange={update} type="color" />
-              <AttributeField label="Foreground" keyName="foreground" value={element.attributes.foreground ?? "#ffffff"} onChange={update} type="color" />
+              <AttributeField
+                label="Background"
+                keyName="background"
+                value={element.attributes.background ?? "#000000"}
+                onChange={update}
+                type="color"
+              />
+              <AttributeField
+                label="Foreground"
+                keyName="foreground"
+                value={element.attributes.foreground ?? "#ffffff"}
+                onChange={update}
+                type="color"
+              />
             </>
           )}
 
           {meta.fieldGroups.includes("content") && "text" in meta.defaultProps && (
-            <AttributeField label="Text" keyName="text" value={element.attributes.text ?? ""} onChange={update} />
+            <AttributeField
+              label="Text"
+              keyName="text"
+              value={element.attributes.text ?? ""}
+              onChange={update}
+            />
           )}
 
           {(meta.fieldGroups.includes("content") || meta.fieldGroups.includes("behavior")) &&
@@ -80,7 +127,16 @@ export function PropertyPanel() {
                 key={attr.key}
                 label={attr.label}
                 keyName={attr.key}
-                value={element.attributes[attr.key] ?? (attr.type === "boolean" ? false : attr.type === "number" ? 0 : attr.type === "color" ? "#000000" : "")}
+                value={
+                  element.attributes[attr.key] ??
+                  (attr.type === "boolean"
+                    ? false
+                    : attr.type === "number"
+                      ? 0
+                      : attr.type === "color"
+                        ? "#000000"
+                        : "")
+                }
                 onChange={update}
                 type={attr.type}
               />
@@ -89,7 +145,12 @@ export function PropertyPanel() {
           {meta.fieldGroups.includes("events") && meta.eventAttrs.length > 0 && (
             <>
               {meta.eventAttrs.map((eventKey) => (
-                <EventField key={eventKey} eventKey={eventKey} value={element.attributes[eventKey]} onChange={update} />
+                <EventField
+                  key={eventKey}
+                  eventKey={eventKey}
+                  value={element.attributes[eventKey]}
+                  onChange={update}
+                />
               ))}
             </>
           )}

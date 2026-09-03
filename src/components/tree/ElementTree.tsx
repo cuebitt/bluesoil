@@ -47,7 +47,14 @@ export function ElementTree() {
 }
 
 function TreeNode({
-  node, depth, selectedId, onSelect, onRemove, onMoveUp, onMoveDown, onDuplicate,
+  node,
+  depth,
+  selectedId,
+  onSelect,
+  onRemove,
+  onMoveUp,
+  onMoveDown,
+  onDuplicate,
 }: {
   node: ElementNode;
   depth: number;
@@ -76,16 +83,48 @@ function TreeNode({
         <span className="flex-1 truncate">{node.name || meta.label}</span>
         {isSelected && (
           <div className="flex gap-0.5">
-            <Button variant="ghost" size="icon" className="size-5" onClick={(e) => { e.stopPropagation(); onMoveUp(node.id); }}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-5"
+              onClick={(e) => {
+                e.stopPropagation();
+                onMoveUp(node.id);
+              }}
+            >
               <ChevronUp className="size-3" />
             </Button>
-            <Button variant="ghost" size="icon" className="size-5" onClick={(e) => { e.stopPropagation(); onMoveDown(node.id); }}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-5"
+              onClick={(e) => {
+                e.stopPropagation();
+                onMoveDown(node.id);
+              }}
+            >
               <ChevronDown className="size-3" />
             </Button>
-            <Button variant="ghost" size="icon" className="size-5" onClick={(e) => { e.stopPropagation(); onDuplicate(node.id); }}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-5"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDuplicate(node.id);
+              }}
+            >
               <Copy className="size-3" />
             </Button>
-            <Button variant="ghost" size="icon" className="size-5" onClick={(e) => { e.stopPropagation(); onRemove(node.id); }}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-5"
+              onClick={(e) => {
+                e.stopPropagation();
+                onRemove(node.id);
+              }}
+            >
               <Trash2 className="size-3" />
             </Button>
           </div>

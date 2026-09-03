@@ -9,12 +9,12 @@ export const CC_PALETTE: Record<string, string> = {
   "7": "rgb(76,76,76)",
   "8": "rgb(153,153,153)",
   "9": "rgb(76,153,178)",
-  "a": "rgb(178,102,229)",
-  "b": "rgb(37,49,146)",
-  "c": "rgb(127,102,76)",
-  "d": "rgb(87,166,78)",
-  "e": "rgb(204,76,76)",
-  "f": "rgb(0,0,0)",
+  a: "rgb(178,102,229)",
+  b: "rgb(37,49,146)",
+  c: "rgb(127,102,76)",
+  d: "rgb(87,166,78)",
+  e: "rgb(204,76,76)",
+  f: "rgb(0,0,0)",
 };
 
 export function hexToCC(hex: string): string {
@@ -31,7 +31,10 @@ export function hexToCC(hex: string): string {
     const pg = parseInt(match[2]);
     const pb = parseInt(match[3]);
     const dist = (r - pr) ** 2 + (g - pg) ** 2 + (b - pb) ** 2;
-    if (dist < bestDist) { bestDist = dist; best = key; }
+    if (dist < bestDist) {
+      bestDist = dist;
+      best = key;
+    }
   }
   return best;
 }

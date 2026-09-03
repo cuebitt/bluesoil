@@ -1,9 +1,27 @@
 import type { ElementNode } from "./elements";
 
 const LUA_KEYWORDS = new Set([
-  "and", "break", "do", "else", "elseif", "end", "false", "for",
-  "function", "if", "in", "local", "nil", "not", "or", "repeat",
-  "return", "then", "true", "until", "while",
+  "and",
+  "break",
+  "do",
+  "else",
+  "elseif",
+  "end",
+  "false",
+  "for",
+  "function",
+  "if",
+  "in",
+  "local",
+  "nil",
+  "not",
+  "or",
+  "repeat",
+  "return",
+  "then",
+  "true",
+  "until",
+  "while",
 ]);
 
 export function isValidLuaName(name: string): boolean {

@@ -11,8 +11,17 @@ interface AttributeFieldProps {
   error?: string | null;
 }
 
-export function AttributeField({ label, keyName, value, onChange, type, error }: AttributeFieldProps) {
-  const inferredType = type ?? (typeof value === "boolean" ? "boolean" : typeof value === "number" ? "number" : "text");
+export function AttributeField({
+  label,
+  keyName,
+  value,
+  onChange,
+  type,
+  error,
+}: AttributeFieldProps) {
+  const inferredType =
+    type ??
+    (typeof value === "boolean" ? "boolean" : typeof value === "number" ? "number" : "text");
 
   if (inferredType === "boolean") {
     return (

@@ -135,7 +135,10 @@ function hexToCCIndex(hex: string): string {
     const pg = parseInt(match[2]);
     const pb = parseInt(match[3]);
     const dist = (r - pr) ** 2 + (g - pg) ** 2 + (b - pb) ** 2;
-    if (dist < bestDist) { bestDist = dist; best = key; }
+    if (dist < bestDist) {
+      bestDist = dist;
+      best = key;
+    }
   }
   return best;
 }
@@ -165,13 +168,27 @@ export function drawGrid(ctx: CanvasRenderingContext2D, grid: TerminalGrid, scal
         const fgColor = CC_PALETTE[cell.fg] || CC_PALETTE["0"];
         const tinted = loadPalette(fgColor);
 
-        ctx.drawImage(tinted, imgX, imgY, imgW, imgH, cellX, cellY, CELL_WIDTH * scale, CELL_HEIGHT * scale);
+        ctx.drawImage(
+          tinted,
+          imgX,
+          imgY,
+          imgW,
+          imgH,
+          cellX,
+          cellY,
+          CELL_WIDTH * scale,
+          CELL_HEIGHT * scale,
+        );
       }
     }
   }
 }
 
-export function pixelToCell(px: number, py: number, scale: number): { x: number; y: number } | null {
+export function pixelToCell(
+  px: number,
+  py: number,
+  scale: number,
+): { x: number; y: number } | null {
   const x = Math.floor((px - TERMINAL_MARGIN) / (CELL_WIDTH * scale));
   const y = Math.floor((py - TERMINAL_MARGIN) / (CELL_HEIGHT * scale));
   if (x < 0 || x >= 51 || y < 0 || y >= 19) return null;

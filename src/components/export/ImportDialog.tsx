@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useEditorStore } from "@/store/editor";
@@ -64,9 +70,7 @@ export function ImportDialog() {
             placeholder="Paste Basalt XML here..."
             className="min-h-48 font-mono text-xs"
           />
-          {error && (
-            <p className="text-sm text-destructive">{error}</p>
-          )}
+          {error && <p className="text-sm text-destructive">{error}</p>}
           {warnings.length > 0 && (
             <ul className="flex flex-col gap-1 rounded-md border border-amber-500/40 bg-amber-500/10 p-2 text-xs">
               {warnings.map((w, i) => (
@@ -75,11 +79,23 @@ export function ImportDialog() {
             </ul>
           )}
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => document.getElementById("xml-file-input")?.click()}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => document.getElementById("xml-file-input")?.click()}
+            >
               Upload .xml file
             </Button>
-            <input id="xml-file-input" type="file" accept=".xml" className="hidden" onChange={handleFileUpload} />
-            <Button onClick={handleImport} disabled={!xml.trim()}>Import</Button>
+            <input
+              id="xml-file-input"
+              type="file"
+              accept=".xml"
+              className="hidden"
+              onChange={handleFileUpload}
+            />
+            <Button onClick={handleImport} disabled={!xml.trim()}>
+              Import
+            </Button>
           </div>
         </div>
       </DialogContent>

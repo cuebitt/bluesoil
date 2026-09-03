@@ -81,30 +81,47 @@ function swapSibling(elements: ElementNode[], id: string, direction: "up" | "dow
   return replaceChildren(elements, result.parent.id, newSiblings);
 }
 
-function replaceChildren(elements: ElementNode[], parentId: string, children: ElementNode[]): ElementNode[] {
+function replaceChildren(
+  elements: ElementNode[],
+  parentId: string,
+  children: ElementNode[],
+): ElementNode[] {
   return elements.map((el) => {
     if (el.id === parentId) return { ...el, children };
-    if (el.children.length > 0) return { ...el, children: replaceChildren(el.children, parentId, children) };
+    if (el.children.length > 0)
+      return { ...el, children: replaceChildren(el.children, parentId, children) };
     return el;
   });
 }
 
-function addToParent(elements: ElementNode[], parentId: string, child: ElementNode, index: number): ElementNode[] {
+function addToParent(
+  elements: ElementNode[],
+  parentId: string,
+  child: ElementNode,
+  index: number,
+): ElementNode[] {
   return elements.map((el) => {
     if (el.id === parentId) {
       const children = [...el.children];
       children.splice(index, 0, child);
       return { ...el, children };
     }
-    if (el.children.length > 0) return { ...el, children: addToParent(el.children, parentId, child, index) };
+    if (el.children.length > 0)
+      return { ...el, children: addToParent(el.children, parentId, child, index) };
     return el;
   });
 }
 
-function updateElementAttr(elements: ElementNode[], id: string, key: string, value: string | number | boolean): ElementNode[] {
+function updateElementAttr(
+  elements: ElementNode[],
+  id: string,
+  key: string,
+  value: string | number | boolean,
+): ElementNode[] {
   return elements.map((el) => {
     if (el.id === id) return { ...el, attributes: { ...el.attributes, [key]: value } };
-    if (el.children.length > 0) return { ...el, children: updateElementAttr(el.children, id, key, value) };
+    if (el.children.length > 0)
+      return { ...el, children: updateElementAttr(el.children, id, key, value) };
     return el;
   });
 }
@@ -112,7 +129,8 @@ function updateElementAttr(elements: ElementNode[], id: string, key: string, val
 function updateElementName(elements: ElementNode[], id: string, name: string): ElementNode[] {
   return elements.map((el) => {
     if (el.id === id) return { ...el, name };
-    if (el.children.length > 0) return { ...el, children: updateElementName(el.children, id, name) };
+    if (el.children.length > 0)
+      return { ...el, children: updateElementName(el.children, id, name) };
     return el;
   });
 }
@@ -131,7 +149,11 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
         elements.splice(index, 0, node);
         return { elements, selectedId: node.id, activeTool: null };
       }
-      return { elements: addToParent(state.elements, parentId, node, index), selectedId: node.id, activeTool: null };
+      return {
+        elements: addToParent(state.elements, parentId, node, index),
+        selectedId: node.id,
+        activeTool: null,
+      };
     });
     return node.id;
   },
@@ -153,7 +175,10 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
       if (result.parent) {
         const children = [...result.parent.children];
         children.splice(result.index + 1, 0, clone);
-        return { elements: replaceChildren(state.elements, result.parent.id, children), selectedId: clone.id };
+        return {
+          elements: replaceChildren(state.elements, result.parent.id, children),
+          selectedId: clone.id,
+        };
       }
       const elements = [...state.elements];
       elements.splice(result.index + 1, 0, clone);
@@ -196,6 +221,8 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
       if (!raw) return;
       const data = JSON.parse(raw);
       if (data.elements) set({ elements: data.elements });
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   },
 }));

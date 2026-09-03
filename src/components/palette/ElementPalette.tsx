@@ -5,11 +5,27 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 const ELEMENT_TYPES: ElementType[] = [
-  "frame", "label", "button", "input", "textBox",
-  "list", "dropdown", "comboBox", "checkbox", "switch",
-  "slider", "progressBar", "table", "tabControl",
-  "dialog", "row", "column", "flex", "menu",
-  "contextMenu", "toast",
+  "frame",
+  "label",
+  "button",
+  "input",
+  "textBox",
+  "list",
+  "dropdown",
+  "comboBox",
+  "checkbox",
+  "switch",
+  "slider",
+  "progressBar",
+  "table",
+  "tabControl",
+  "dialog",
+  "row",
+  "column",
+  "flex",
+  "menu",
+  "contextMenu",
+  "toast",
 ];
 
 export function ElementPalette() {
@@ -39,7 +55,9 @@ export function ElementPalette() {
                 <Icon className="size-4 shrink-0" />
                 <span className="flex-1 truncate">{meta.label}</span>
                 {meta.isContainer && (
-                  <Badge variant="secondary" className="ml-auto text-[10px]">container</Badge>
+                  <Badge variant="secondary" className="ml-auto text-[10px]">
+                    container
+                  </Badge>
                 )}
               </button>
             );

@@ -23,13 +23,34 @@ function attributesToXml(el: ElementNode): string {
   if (el.name) parts.push(`name="${el.name}"`);
 
   const attrOrder = [
-    "x", "y", "width", "height",
-    "text", "placeholder", "placeholderColor", "maxLength", "replaceChar", "pattern",
-    "background", "foreground",
-    "emptyText", "scrollbar", "dropHeight", "sortable",
-    "value", "minValue", "maxWidth",
-    "onClick", "onClickUp", "onChange", "onSelect", "onEnter",
-    "onFocus", "onBlur", "onKey", "onScroll",
+    "x",
+    "y",
+    "width",
+    "height",
+    "text",
+    "placeholder",
+    "placeholderColor",
+    "maxLength",
+    "replaceChar",
+    "pattern",
+    "background",
+    "foreground",
+    "emptyText",
+    "scrollbar",
+    "dropHeight",
+    "sortable",
+    "value",
+    "minValue",
+    "maxWidth",
+    "onClick",
+    "onClickUp",
+    "onChange",
+    "onSelect",
+    "onEnter",
+    "onFocus",
+    "onBlur",
+    "onKey",
+    "onScroll",
   ];
 
   for (const key of attrOrder) {
@@ -58,8 +79,5 @@ function formatAttrValue(value: string | number | boolean): string {
   if (typeof value === "number") return String(value);
   // Entity-escaping is safe for reactive {expr} values too: the XML
   // parser decodes entities before Basalt evaluates the expression.
-  return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/"/g, "&quot;");
+  return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
 }
