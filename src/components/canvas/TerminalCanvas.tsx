@@ -10,7 +10,13 @@ import {
   CELL_HEIGHT,
 } from "@/lib/terminal-renderer";
 import { TERMINAL_WIDTH, TERMINAL_HEIGHT } from "@/lib/palette-colors";
-import { ELEMENT_DEFS, findElementById, type ElementType } from "@/lib/elements";
+import {
+  ELEMENT_DEFS,
+  findElementById,
+  isDraggable,
+  type ElementNode,
+  type ElementType,
+} from "@/lib/elements";
 import fontUrl from "../../assets/font.png";
 
 const QUICK_ADD_TYPES: ElementType[] = [
@@ -32,9 +38,28 @@ interface ContextMenuState {
   targetId: string | null;
 }
 
+function findParent(nodes: ElementNode[], id: string): ElementNode | null {
+  for (const n of nodes) {
+    if (n.children.some((c) => c.id === id)) return n;
+    const p = findParent(n.children, id);
+    if (p) return p;
+  }
+  return null;
+}
+
 export function TerminalCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<{
+    id: string;
+    origX: number;
+    origY: number;
+    startCellX: number;
+    startCellY: number;
+    startClientX: number;
+    startClientY: number;
+    dragging: boolean;
+  } | null>(null);
   const [fontError, setFontError] = useState<string | null>(null);
   const [fontReady, setFontReady] = useState(false);
   const [menu, setMenu] = useState<ContextMenuState | null>(null);
@@ -43,6 +68,7 @@ export function TerminalCanvas() {
   const activeTool = useEditorStore((s) => s.activeTool);
   const addElement = useEditorStore((s) => s.addElement);
   const select = useEditorStore((s) => s.select);
+  const updateAttribute = useEditorStore((s) => s.updateAttribute);
   const duplicateElement = useEditorStore((s) => s.duplicateElement);
   const copy = useEditorStore((s) => s.copy);
   const removeElement = useEditorStore((s) => s.removeElement);
@@ -116,6 +142,82 @@ export function TerminalCanvas() {
   useEffect(() => {
     draw();
   }, [draw]);
+
+  const cellFromEvent = useCallback(
+    (e: React.MouseEvent) => {
+      const canvas = canvasRef.current;
+      if (!canvas) return null;
+      const rect = canvas.getBoundingClientRect();
+      return pixelToCell(e.clientX - rect.left, e.clientY - rect.top, getScale());
+    },
+    [getScale],
+  );
+
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent<HTMLCanvasElement>) => {
+      if (e.button !== 0 || activeTool) return;
+      const cell = cellFromEvent(e);
+      if (!cell) return;
+      const hit = hitTest(elements, cell.x, cell.y);
+      if (!hit) return;
+      if (!isDraggable(hit, findParent(elements, hit.id))) return;
+      dragRef.current = {
+        id: hit.id,
+        origX: (hit.attributes.x as number) || 1,
+        origY: (hit.attributes.y as number) || 1,
+        startCellX: cell.x,
+        startCellY: cell.y,
+        startClientX: e.clientX,
+        startClientY: e.clientY,
+        dragging: false,
+      };
+    },
+    [activeTool, cellFromEvent, elements],
+  );
+
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLCanvasElement>) => {
+      const canvas = canvasRef.current;
+      const drag = dragRef.current;
+      if (!drag) {
+        if (canvas && !activeTool) {
+          const cell = cellFromEvent(e);
+          const hit = cell ? hitTest(elements, cell.x, cell.y) : null;
+          canvas.style.cursor =
+            hit && isDraggable(hit, findParent(elements, hit.id)) ? "move" : "crosshair";
+        }
+        return;
+      }
+      if (!drag.dragging) {
+        if (Math.hypot(e.clientX - drag.startClientX, e.clientY - drag.startClientY) <= 4) return;
+        drag.dragging = true;
+        select(drag.id);
+        if (canvas) canvas.style.cursor = "grabbing";
+      }
+      const cell = cellFromEvent(e);
+      if (!cell) return;
+      const el = findElementById(useEditorStore.getState().elements, drag.id);
+      if (!el) return;
+      const w = (el.attributes.width as number) || 10;
+      const h = (el.attributes.height as number) || 3;
+      const nx = Math.min(
+        Math.max(drag.origX + (cell.x - drag.startCellX), 1),
+        TERMINAL_WIDTH - w + 1,
+      );
+      const ny = Math.min(
+        Math.max(drag.origY + (cell.y - drag.startCellY), 1),
+        TERMINAL_HEIGHT - h + 1,
+      );
+      updateAttribute(drag.id, "x", nx);
+      updateAttribute(drag.id, "y", ny);
+    },
+    [activeTool, cellFromEvent, elements, select, updateAttribute],
+  );
+
+  const endDrag = useCallback(() => {
+    dragRef.current = null;
+    if (canvasRef.current) canvasRef.current.style.cursor = "crosshair";
+  }, []);
 
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -195,6 +297,14 @@ export function TerminalCanvas() {
     return () => window.removeEventListener("resize", handler);
   }, [draw]);
 
+  useEffect(() => {
+    const up = () => {
+      dragRef.current = null;
+    };
+    window.addEventListener("mouseup", up);
+    return () => window.removeEventListener("mouseup", up);
+  }, []);
+
   return (
     <div
       ref={wrapperRef}
@@ -219,6 +329,9 @@ export function TerminalCanvas() {
           ref={canvasRef}
           className="cursor-crosshair"
           onClick={handleClick}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={endDrag}
           onContextMenu={handleContextMenu}
           style={{ visibility: fontReady ? "visible" : "hidden" }}
         />

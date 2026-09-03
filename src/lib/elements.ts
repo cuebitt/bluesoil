@@ -298,3 +298,10 @@ export function findElementById(elements: ElementNode[], id: string): ElementNod
   }
   return null;
 }
+
+export function isDraggable(node: ElementNode, parent: ElementNode | null): boolean {
+  // ponytail: v1 allows top-level only; layout children (row/column/flex)
+  // stay non-draggable since the parent manages position.
+  if (parent !== null) return false;
+  return ELEMENT_DEFS[node.type].fieldGroups.includes("position");
+}
