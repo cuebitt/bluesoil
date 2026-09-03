@@ -45,6 +45,3 @@ export function ccToHex(index: string): string {
   if (!match) return "#000000";
   return `#${parseInt(match[1]).toString(16).padStart(2, "0")}${parseInt(match[2]).toString(16).padStart(2, "0")}${parseInt(match[3]).toString(16).padStart(2, "0")}`;
 }
-
-export const TERMINAL_WIDTH = 51;
-export const TERMINAL_HEIGHT = 19;

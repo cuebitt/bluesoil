@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import type { ElementType, ElementNode } from "@/lib/elements";
 import { createElementNode } from "@/lib/elements";
+import { clampTerminalSize } from "@/lib/terminal";
 
 interface EditorStore {
   elements: ElementNode[];
@@ -9,6 +10,10 @@ interface EditorStore {
   clipboard: ElementNode | null;
   past: ElementNode[][];
   future: ElementNode[][];
+  terminalWidth: number;
+  terminalHeight: number;
+
+  setTerminalSize: (w: number, h: number) => void;
 
   addElement: (type: ElementType, parentId: string | null, index: number) => string;
   removeElement: (id: string) => void;
@@ -177,6 +182,13 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   clipboard: null,
   past: [],
   future: [],
+  terminalWidth: 51,
+  terminalHeight: 19,
+
+  setTerminalSize: (w, h) => {
+    const { width, height } = clampTerminalSize(w, h);
+    set({ terminalWidth: width, terminalHeight: height });
+  },
 
   addElement: (type, parentId, index) => {
     const node = createElementNode(type);
@@ -277,8 +289,11 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   },
 
   saveToLocalStorage: () => {
-    const { elements } = get();
-    localStorage.setItem("bluesoil-project", JSON.stringify({ elements, version: 1 }));
+    const { elements, terminalWidth, terminalHeight } = get();
+    localStorage.setItem(
+      "bluesoil-project",
+      JSON.stringify({ elements, terminalWidth, terminalHeight, version: 2 }),
+    );
   },
 
   loadFromLocalStorage: () => {
@@ -287,7 +302,13 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
         localStorage.getItem("bluesoil-project") ?? localStorage.getItem("bluesand-project");
       if (!raw) return;
       const data = JSON.parse(raw);
-      if (data.elements) set({ elements: data.elements });
+      if (data.elements) {
+        const { width, height } = clampTerminalSize(
+          data.terminalWidth ?? 51,
+          data.terminalHeight ?? 19,
+        );
+        set({ elements: data.elements, terminalWidth: width, terminalHeight: height });
+      }
     } catch {
       /* ignore */
     }

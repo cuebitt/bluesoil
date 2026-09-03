@@ -8,6 +8,8 @@ beforeEach(() => {
     clipboard: null,
     past: [],
     future: [],
+    terminalWidth: 51,
+    terminalHeight: 19,
   });
 });
 
@@ -61,5 +63,27 @@ describe("history", () => {
     expect(useEditorStore.getState().elements[0].name).toBe("saveBtn");
     useEditorStore.getState().undo();
     expect(useEditorStore.getState().elements[0].name).toBe("");
+  });
+});
+
+describe("terminal size", () => {
+  test("defaults to 51x19", () => {
+    expect(useEditorStore.getState().terminalWidth).toBe(51);
+    expect(useEditorStore.getState().terminalHeight).toBe(19);
+  });
+
+  test("setTerminalSize clamps", () => {
+    useEditorStore.getState().setTerminalSize(0, 999);
+    expect(useEditorStore.getState().terminalWidth).toBe(1);
+    expect(useEditorStore.getState().terminalHeight).toBe(81);
+  });
+
+  test("undo does not revert a size change", () => {
+    const s = useEditorStore.getState();
+    s.addElement("button", null, 0);
+    useEditorStore.getState().setTerminalSize(26, 20);
+    useEditorStore.getState().undo();
+    expect(useEditorStore.getState().terminalWidth).toBe(26);
+    expect(useEditorStore.getState().terminalHeight).toBe(20);
   });
 });

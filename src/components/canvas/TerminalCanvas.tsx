@@ -9,7 +9,6 @@ import {
   CELL_WIDTH,
   CELL_HEIGHT,
 } from "@/lib/terminal-renderer";
-import { TERMINAL_WIDTH, TERMINAL_HEIGHT } from "@/lib/palette-colors";
 import {
   ELEMENT_DEFS,
   findElementById,
@@ -72,15 +71,17 @@ export function TerminalCanvas() {
   const duplicateElement = useEditorStore((s) => s.duplicateElement);
   const copy = useEditorStore((s) => s.copy);
   const removeElement = useEditorStore((s) => s.removeElement);
+  const terminalWidth = useEditorStore((s) => s.terminalWidth);
+  const terminalHeight = useEditorStore((s) => s.terminalHeight);
 
   const getScale = useCallback(() => {
     if (!wrapperRef.current) return 1;
     const availW = wrapperRef.current.clientWidth - 8;
     const availH = wrapperRef.current.clientHeight - 8;
-    const termW = TERMINAL_WIDTH * CELL_WIDTH;
-    const termH = TERMINAL_HEIGHT * CELL_HEIGHT;
+    const termW = terminalWidth * CELL_WIDTH;
+    const termH = terminalHeight * CELL_HEIGHT;
     return Math.max(1, Math.min(Math.floor(availW / termW), Math.floor(availH / termH)));
-  }, []);
+  }, [terminalWidth, terminalHeight]);
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
@@ -89,8 +90,8 @@ export function TerminalCanvas() {
     if (!ctx) return;
 
     const scale = getScale();
-    const width = TERMINAL_WIDTH * CELL_WIDTH * scale + 8;
-    const height = TERMINAL_HEIGHT * CELL_HEIGHT * scale + 8;
+    const width = terminalWidth * CELL_WIDTH * scale + 8;
+    const height = terminalHeight * CELL_HEIGHT * scale + 8;
 
     canvas.width = width;
     canvas.height = height;
@@ -98,7 +99,7 @@ export function TerminalCanvas() {
     canvas.style.height = `${height}px`;
     ctx.imageSmoothingEnabled = false;
 
-    const grid = renderToGrid(elements);
+    const grid = renderToGrid(elements, terminalWidth, terminalHeight);
     drawGrid(ctx, grid, scale);
 
     if (selectedId) {
@@ -120,7 +121,7 @@ export function TerminalCanvas() {
         ctx.setLineDash([]);
       }
     }
-  }, [elements, selectedId, getScale]);
+  }, [elements, selectedId, getScale, terminalWidth, terminalHeight]);
 
   const load = useCallback(() => {
     setFontError(null);
@@ -148,9 +149,15 @@ export function TerminalCanvas() {
       const canvas = canvasRef.current;
       if (!canvas) return null;
       const rect = canvas.getBoundingClientRect();
-      return pixelToCell(e.clientX - rect.left, e.clientY - rect.top, getScale());
+      return pixelToCell(
+        e.clientX - rect.left,
+        e.clientY - rect.top,
+        getScale(),
+        terminalWidth,
+        terminalHeight,
+      );
     },
-    [getScale],
+    [getScale, terminalWidth, terminalHeight],
   );
 
   const handleMouseDown = useCallback(
@@ -202,16 +209,16 @@ export function TerminalCanvas() {
       const h = (el.attributes.height as number) || 3;
       const nx = Math.min(
         Math.max(drag.origX + (cell.x - drag.startCellX), 1),
-        TERMINAL_WIDTH - w + 1,
+        terminalWidth - w + 1,
       );
       const ny = Math.min(
         Math.max(drag.origY + (cell.y - drag.startCellY), 1),
-        TERMINAL_HEIGHT - h + 1,
+        terminalHeight - h + 1,
       );
       updateAttribute(drag.id, "x", nx);
       updateAttribute(drag.id, "y", ny);
     },
-    [activeTool, cellFromEvent, elements, select, updateAttribute],
+    [activeTool, cellFromEvent, elements, select, updateAttribute, terminalWidth, terminalHeight],
   );
 
   const endDrag = useCallback(() => {
@@ -227,7 +234,7 @@ export function TerminalCanvas() {
       const px = e.clientX - rect.left;
       const py = e.clientY - rect.top;
       const scale = getScale();
-      const cell = pixelToCell(px, py, scale);
+      const cell = pixelToCell(px, py, scale, terminalWidth, terminalHeight);
       if (!cell) return;
 
       if (activeTool) {
@@ -242,7 +249,7 @@ export function TerminalCanvas() {
         select(hit ? hit.id : null);
       }
     },
-    [activeTool, elements, addElement, select, getScale],
+    [activeTool, elements, addElement, select, getScale, terminalWidth, terminalHeight],
   );
 
   const handleContextMenu = useCallback(
@@ -251,7 +258,13 @@ export function TerminalCanvas() {
       const canvas = canvasRef.current;
       if (!canvas) return;
       const rect = canvas.getBoundingClientRect();
-      const cell = pixelToCell(e.clientX - rect.left, e.clientY - rect.top, getScale());
+      const cell = pixelToCell(
+        e.clientX - rect.left,
+        e.clientY - rect.top,
+        getScale(),
+        terminalWidth,
+        terminalHeight,
+      );
       if (!cell) {
         setMenu(null);
         return;
@@ -265,7 +278,7 @@ export function TerminalCanvas() {
         targetId: hit ? hit.id : null,
       });
     },
-    [elements, getScale],
+    [elements, getScale, terminalWidth, terminalHeight],
   );
 
   const handleAddFromMenu = useCallback(

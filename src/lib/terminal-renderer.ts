@@ -1,5 +1,5 @@
 import type { ElementNode } from "./elements";
-import { CC_PALETTE, TERMINAL_WIDTH, TERMINAL_HEIGHT, hexToCC } from "./palette-colors";
+import { CC_PALETTE, hexToCC } from "./palette-colors";
 
 export const CELL_WIDTH = 6;
 export const CELL_HEIGHT = 9;
@@ -58,11 +58,11 @@ function loadPalette(color: string): HTMLCanvasElement {
   return canvas;
 }
 
-export function createGrid(): TerminalGrid {
+export function createGrid(w: number, h: number): TerminalGrid {
   const grid: TerminalGrid = [];
-  for (let y = 0; y < TERMINAL_HEIGHT; y++) {
+  for (let y = 0; y < h; y++) {
     const row: TerminalCell[] = [];
-    for (let x = 0; x < TERMINAL_WIDTH; x++) {
+    for (let x = 0; x < w; x++) {
       row.push({ char: " ", fg: "0", bg: "f" });
     }
     grid.push(row);
@@ -70,8 +70,8 @@ export function createGrid(): TerminalGrid {
   return grid;
 }
 
-export function renderToGrid(elements: ElementNode[]): TerminalGrid {
-  const grid = createGrid();
+export function renderToGrid(elements: ElementNode[], w: number, h: number): TerminalGrid {
+  const grid = createGrid(w, h);
 
   function renderElement(el: ElementNode) {
     const x = (el.attributes.x as number) || 1;
@@ -88,7 +88,7 @@ export function renderToGrid(elements: ElementNode[]): TerminalGrid {
         for (let dx = 0; dx < w; dx++) {
           const gx = x - 1 + dx;
           const gy = y - 1 + dy;
-          if (gy >= 0 && gy < TERMINAL_HEIGHT && gx >= 0 && gx < TERMINAL_WIDTH) {
+          if (gy >= 0 && gy < h && gx >= 0 && gx < w) {
             grid[gy][gx].bg = bgIdx;
           }
         }
@@ -99,7 +99,7 @@ export function renderToGrid(elements: ElementNode[]): TerminalGrid {
     for (let i = 0; i < text.length && i < w; i++) {
       const gx = x - 1 + i;
       const gy = y - 1;
-      if (gy >= 0 && gy < TERMINAL_HEIGHT && gx >= 0 && gx < TERMINAL_WIDTH) {
+      if (gy >= 0 && gy < h && gx >= 0 && gx < w) {
         grid[gy][gx].char = text[i];
         grid[gy][gx].fg = fgIdx;
       }
@@ -128,8 +128,8 @@ export function drawGrid(ctx: CanvasRenderingContext2D, grid: TerminalGrid, scal
   const fontScale = fontImage.width / 256;
   const fontMargin = fontScale;
 
-  for (let y = 0; y < TERMINAL_HEIGHT; y++) {
-    for (let x = 0; x < TERMINAL_WIDTH; x++) {
+  for (let y = 0; y < grid.length; y++) {
+    for (let x = 0; x < grid[y].length; x++) {
       const cell = grid[y][x];
       const cellX = x * CELL_WIDTH * scale + TERMINAL_MARGIN;
       const cellY = y * CELL_HEIGHT * scale + TERMINAL_MARGIN;
@@ -167,10 +167,12 @@ export function pixelToCell(
   px: number,
   py: number,
   scale: number,
+  w: number,
+  h: number,
 ): { x: number; y: number } | null {
   const x = Math.floor((px - TERMINAL_MARGIN) / (CELL_WIDTH * scale));
   const y = Math.floor((py - TERMINAL_MARGIN) / (CELL_HEIGHT * scale));
-  if (x < 0 || x >= TERMINAL_WIDTH || y < 0 || y >= TERMINAL_HEIGHT) return null;
+  if (x < 0 || x >= w || y < 0 || y >= h) return null;
   return { x, y };
 }
 
