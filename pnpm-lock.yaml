@@ -240,9 +240,6 @@ importers:
       react-dom:
         specifier: ^19.2.8
         version: 19.2.8(react@19.2.8)
-      shadcn:
-        specifier: ^4.19.1
-        version: 4.19.1(typescript@6.0.3)
       tailwind-merge:
         specifier: ^3.6.0
         version: 3.6.0
@@ -268,6 +265,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^6.1.0
         version: 6.1.1(@voidzero-dev/vite-plus-core@0.2.9(@types/node@24.13.3)(jiti@2.7.0)(typescript@6.0.3))
+      shadcn:
+        specifier: ^4.19.1
+        version: 4.19.1(typescript@6.0.3)
       tailwindcss:
         specifier: ^4.3.3
         version: 4.3.3

@@ -111,14 +111,6 @@ export function TerminalCanvas() {
   );
 
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") useEditorStore.getState().setActiveTool(null);
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, []);
-
-  useEffect(() => {
     const handler = () => draw();
     window.addEventListener("resize", handler);
     return () => window.removeEventListener("resize", handler);

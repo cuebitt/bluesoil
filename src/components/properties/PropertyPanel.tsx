@@ -73,25 +73,24 @@ export function PropertyPanel() {
           {meta.fieldGroups.includes("content") && "text" in meta.defaultProps && (
             <AttributeField label="Text" keyName="text" value={element.attributes.text ?? ""} onChange={update} />
           )}
-          {meta.fieldGroups.includes("content") && "placeholder" in meta.defaultProps && (
-            <AttributeField label="Placeholder" keyName="placeholder" value={element.attributes.placeholder ?? ""} onChange={update} />
-          )}
-          {meta.fieldGroups.includes("content") && "emptyText" in meta.defaultProps && (
-            <AttributeField label="Empty Text" keyName="emptyText" value={element.attributes.emptyText ?? ""} onChange={update} />
-          )}
 
-          {meta.fieldGroups.includes("behavior") && "scrollbar" in meta.defaultProps && (
-            <AttributeField label="Scrollbar" keyName="scrollbar" value={element.attributes.scrollbar ?? "auto"} onChange={update} />
-          )}
-          {meta.fieldGroups.includes("behavior") && "sortable" in meta.defaultProps && (
-            <AttributeField label="Sortable" keyName="sortable" value={element.attributes.sortable ?? false} onChange={update} type="boolean" />
-          )}
+          {(meta.fieldGroups.includes("content") || meta.fieldGroups.includes("behavior")) &&
+            meta.optionalAttrs.map((attr) => (
+              <AttributeField
+                key={attr.key}
+                label={attr.label}
+                keyName={attr.key}
+                value={element.attributes[attr.key] ?? (attr.type === "boolean" ? false : attr.type === "number" ? 0 : attr.type === "color" ? "#000000" : "")}
+                onChange={update}
+                type={attr.type}
+              />
+            ))}
 
-          {meta.fieldGroups.includes("events") && (
+          {meta.fieldGroups.includes("events") && meta.eventAttrs.length > 0 && (
             <>
-              <EventField eventKey="onClick" value={element.attributes.onClick} onChange={update} />
-              <EventField eventKey="onChange" value={element.attributes.onChange} onChange={update} />
-              <EventField eventKey="onSelect" value={element.attributes.onSelect} onChange={update} />
+              {meta.eventAttrs.map((eventKey) => (
+                <EventField key={eventKey} eventKey={eventKey} value={element.attributes[eventKey]} onChange={update} />
+              ))}
             </>
           )}
         </div>
