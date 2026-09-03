@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vite-plus/test";
-import { isDraggable, type ElementNode, type ElementType } from "./elements";
+import { ELEMENT_DEFS, isDraggable, type ElementNode, type ElementType } from "./elements";
 
 function node(
   type: ElementType,
@@ -34,5 +34,23 @@ describe("isDraggable", () => {
       const { node: el, parent } = node("label", layout);
       expect(isDraggable(el, parent)).toBe(false);
     }
+  });
+});
+
+describe("widget scalar props", () => {
+  test("slider exposes step", () => {
+    expect(ELEMENT_DEFS.slider.optionalAttrs.some((a) => a.key === "step")).toBe(true);
+  });
+
+  test("list exposes selectable", () => {
+    expect(ELEMENT_DEFS.list.optionalAttrs.some((a) => a.key === "selectable")).toBe(true);
+  });
+
+  test("list scrollbar is a select", () => {
+    expect(ELEMENT_DEFS.list.optionalAttrs.find((a) => a.key === "scrollbar")?.type).toBe("select");
+  });
+
+  test("switch exposes onBackground", () => {
+    expect(ELEMENT_DEFS.switch.optionalAttrs.some((a) => a.key === "onBackground")).toBe(true);
   });
 });

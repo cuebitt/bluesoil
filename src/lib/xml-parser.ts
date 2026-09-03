@@ -101,7 +101,23 @@ function convertAttrValue(key: string, value: string): string | number | boolean
   if (value === "true") return true;
   if (value === "false") return false;
   if (
-    ["x", "y", "width", "height", "maxLength", "dropHeight", "minValue", "maxWidth"].includes(key)
+    [
+      "x",
+      "y",
+      "width",
+      "height",
+      "maxLength",
+      "dropHeight",
+      "minValue",
+      "maxWidth",
+      "z",
+      "step",
+      "max",
+      "activeTab",
+      "tabHeight",
+      "flexSpacing",
+      "progress",
+    ].includes(key)
   ) {
     const num = Number(value);
     if (!isNaN(num)) return num;

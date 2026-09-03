@@ -58,6 +58,20 @@ export function PropertyPanel() {
           {meta.fieldGroups.includes("position") && (
             <>
               <AttributeField
+                label="Visible"
+                keyName="visible"
+                value={element.attributes.visible ?? true}
+                onChange={update}
+                type="boolean"
+              />
+              <AttributeField
+                label="Z"
+                keyName="z"
+                value={element.attributes.z ?? 0}
+                onChange={update}
+                type="number"
+              />
+              <AttributeField
                 label="X"
                 keyName="x"
                 value={element.attributes.x ?? 1}
@@ -135,10 +149,13 @@ export function PropertyPanel() {
                       ? 0
                       : attr.type === "color"
                         ? "#000000"
-                        : "")
+                        : attr.type === "select"
+                          ? (attr.options?.[0] ?? "")
+                          : "")
                 }
                 onChange={update}
                 type={attr.type}
+                options={attr.options}
               />
             ))}
 

@@ -46,12 +46,13 @@ export type ElementType =
   | "contextMenu"
   | "toast";
 
-export type AttrFieldType = "text" | "number" | "boolean" | "color";
+export type AttrFieldType = "text" | "number" | "boolean" | "color" | "select";
 
 export interface OptionalAttr {
   key: string;
   label: string;
   type: AttrFieldType;
+  options?: string[];
 }
 
 export interface ElementMeta {
@@ -128,11 +129,18 @@ export const ELEMENT_DEFS: Record<ElementType, ElementMeta> = {
     label: "List",
     icon: List,
     isContainer: false,
-    defaultProps: { x: 1, y: 1, width: 15, height: 8 },
+    defaultProps: { x: 1, y: 1, width: 15, height: 8, selectable: true },
     fieldGroups: ["position", "size", "appearance", "content", "behavior", "events"],
     optionalAttrs: [
       { key: "emptyText", label: "Empty Text", type: "text" },
-      { key: "scrollbar", label: "Scrollbar", type: "text" },
+      {
+        key: "scrollbar",
+        label: "Scrollbar",
+        type: "select",
+        options: ["auto", "always", "hidden"],
+      },
+      { key: "selectable", label: "Selectable", type: "boolean" },
+      { key: "multiSelection", label: "Multi Selection", type: "boolean" },
     ],
     eventAttrs: ["onChange", "onSelect"],
   },
@@ -160,7 +168,7 @@ export const ELEMENT_DEFS: Record<ElementType, ElementMeta> = {
     isContainer: false,
     defaultProps: { x: 1, y: 1, text: "Option" },
     fieldGroups: ["position", "size", "appearance", "content", "events"],
-    optionalAttrs: [],
+    optionalAttrs: [{ key: "checked", label: "Checked", type: "boolean" }],
     eventAttrs: ["onChange"],
   },
   switch: {
@@ -169,19 +177,26 @@ export const ELEMENT_DEFS: Record<ElementType, ElementMeta> = {
     isContainer: false,
     defaultProps: { x: 1, y: 1 },
     fieldGroups: ["position", "size", "appearance", "events"],
-    optionalAttrs: [],
+    optionalAttrs: [
+      { key: "checked", label: "Checked", type: "boolean" },
+      { key: "onBackground", label: "On Background", type: "color" },
+      { key: "offBackground", label: "Off Background", type: "color" },
+    ],
     eventAttrs: ["onChange"],
   },
   slider: {
     label: "Slider",
     icon: SlidersHorizontal,
     isContainer: false,
-    defaultProps: { x: 1, y: 1, width: 15 },
+    defaultProps: { x: 1, y: 1, width: 15, step: 1, max: 100, horizontal: true },
     fieldGroups: ["position", "size", "appearance", "behavior", "events"],
     optionalAttrs: [
       { key: "value", label: "Value", type: "number" },
       { key: "minValue", label: "Min Value", type: "number" },
       { key: "maxValue", label: "Max Value", type: "number" },
+      { key: "step", label: "Step", type: "number" },
+      { key: "max", label: "Max", type: "number" },
+      { key: "horizontal", label: "Horizontal", type: "boolean" },
     ],
     eventAttrs: ["onChange"],
   },
@@ -192,8 +207,15 @@ export const ELEMENT_DEFS: Record<ElementType, ElementMeta> = {
     defaultProps: { x: 1, y: 1, width: 20, height: 1 },
     fieldGroups: ["position", "size", "appearance", "behavior", "events"],
     optionalAttrs: [
-      { key: "value", label: "Value", type: "number" },
+      { key: "progress", label: "Progress", type: "number" },
       { key: "maxWidth", label: "Max Width", type: "number" },
+      { key: "showPercentage", label: "Show Percentage", type: "boolean" },
+      {
+        key: "direction",
+        label: "Direction",
+        type: "select",
+        options: ["right", "left", "up", "down"],
+      },
     ],
     eventAttrs: [],
   },
@@ -203,7 +225,10 @@ export const ELEMENT_DEFS: Record<ElementType, ElementMeta> = {
     isContainer: false,
     defaultProps: { x: 1, y: 1, width: 30, height: 10 },
     fieldGroups: ["position", "size", "appearance", "behavior", "events"],
-    optionalAttrs: [{ key: "sortable", label: "Sortable", type: "boolean" }],
+    optionalAttrs: [
+      { key: "sortable", label: "Sortable", type: "boolean" },
+      { key: "gridColor", label: "Grid Color", type: "color" },
+    ],
     eventAttrs: ["onSelect", "onChange"],
   },
   tabControl: {
@@ -257,7 +282,7 @@ export const ELEMENT_DEFS: Record<ElementType, ElementMeta> = {
     isContainer: true,
     defaultProps: { x: 1, y: 1, width: 15, height: 5 },
     fieldGroups: ["position", "size", "appearance", "events"],
-    optionalAttrs: [],
+    optionalAttrs: [{ key: "separatorColor", label: "Separator Color", type: "color" }],
     eventAttrs: ["onSelect"],
   },
   contextMenu: {
@@ -266,7 +291,7 @@ export const ELEMENT_DEFS: Record<ElementType, ElementMeta> = {
     isContainer: true,
     defaultProps: { x: 1, y: 1 },
     fieldGroups: ["position", "size", "appearance", "events"],
-    optionalAttrs: [],
+    optionalAttrs: [{ key: "separatorColor", label: "Separator Color", type: "color" }],
     eventAttrs: ["onSelect"],
   },
   toast: {

@@ -1,5 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import type { AttrFieldType } from "@/lib/elements";
 import { ColorPicker } from "./ColorPicker";
 
 interface AttributeFieldProps {
@@ -7,7 +8,8 @@ interface AttributeFieldProps {
   keyName: string;
   value: string | number | boolean;
   onChange: (key: string, value: string | number | boolean) => void;
-  type?: "text" | "number" | "boolean" | "color";
+  type?: AttrFieldType;
+  options?: string[];
   error?: string | null;
 }
 
@@ -17,6 +19,7 @@ export function AttributeField({
   value,
   onChange,
   type,
+  options,
   error,
 }: AttributeFieldProps) {
   const inferredType =
@@ -37,6 +40,28 @@ export function AttributeField({
       <div className="flex flex-col gap-1">
         <label className="text-sm">{label}</label>
         <ColorPicker value={String(value)} onChange={(hex) => onChange(keyName, hex)} />
+      </div>
+    );
+  }
+
+  if (inferredType === "select") {
+    const opts = options ?? [];
+    const current = opts.includes(String(value)) ? String(value) : (opts[0] ?? "");
+    return (
+      <div className="flex flex-col gap-1">
+        <label className="text-sm">{label}</label>
+        <select
+          value={current}
+          onChange={(e) => onChange(keyName, e.target.value)}
+          className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+        >
+          {opts.map((opt) => (
+            <option key={opt} value={opt}>
+              {opt}
+            </option>
+          ))}
+        </select>
+        {error && <p className="text-xs text-destructive">{error}</p>}
       </div>
     );
   }
